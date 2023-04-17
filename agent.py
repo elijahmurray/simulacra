@@ -4,6 +4,8 @@ class Agent:
         self.memories = []
         self.current_action = None
         self.tasks = []
+        self.experiences = []
+        self.relationships = {}
         self.add_memory(f"My name is {name}")
 
 
@@ -38,6 +40,22 @@ class Agent:
             print(f"{self.name} {task['description']}")
             self.tasks.remove(task)
             self.add_memory(f"I {task['description']}")
+
+    def form_relationship(self, other_agent, initial_strength=0):
+        self.relationships[other_agent.name] = initial_strength
+        other_agent.relationships[self.name] = initial_strength
+
+    def update_relationship(self, other_agent, change):
+        self.relationships[other_agent.name] += change
+        other_agent.relationships[self.name] += change
+
+    def decide_on_task(self):
+        # Implement logic to make decisions based on experiences and relationships.
+        # For simplicity, you can randomly choose a task for now.
+        import random
+        if self.tasks:
+            return random.choice(self.tasks)
+        return None
 
     def __str__(self):
         return f"Agent {self.name}"
