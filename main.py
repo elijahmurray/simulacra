@@ -1,5 +1,8 @@
+import openai
 from scheduler import Scheduler
 from agent import Agent
+
+openai.api_key = "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"
 
 def main():
     alice = Agent("Alice")
@@ -14,18 +17,24 @@ def main():
 
     scheduler = Scheduler([alice, bob])
 
+    num_conversations = 3  # Change this to the number of conversations you want
+    for _ in range(num_conversations):
+        agents['alice'].talk(agents['bob'])
+
     while True:
-        command = input("Enter command (greet, recall, add_task, perform_tasks, step, or quit): ")
+        command = input("Enter command (talk, recall, add_task, perform_tasks, step, or quit): ")
         if command == "quit":
             break
         elif command == "step":
             scheduler.step()  # Add this line
-        elif command in {"greet", "recall", "add_task", "perform_tasks"}:
+        elif command in {"talk", "recall", "add_task", "perform_tasks"}:
             agent_name = input("Which agent? (alice or bob): ").lower()
             if agent_name in agents:
-                if command == "greet":
-                    other_agent_name = "bob" if agent_name == "alice" else "alice"
-                    agents[agent_name].greet(agents[other_agent_name])
+                if command == "talk":
+                    agent_name = input("Which agent? (alice or bob): ").lower()
+                    if agent_name in agents:
+                        other_agent_name = "bob" if agent_name == "alice" else "alice"
+                        agents[agent_name].talk(agents[other_agent_name])
                 elif command == "recall":
                     query = input("Enter a search query: ")
                     memories = agents[agent_name].search_memory(query)
