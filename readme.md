@@ -1,37 +1,57 @@
-# Simulacra
+# Agent Simulation
 
-Simulacra is a simulation of two agents interacting with each other. The agents have personalities, memories, tasks to perform, and can communicate with each other using natural language.
-
-## Requirements
-
-Simulacra requires the following dependencies:
-
-- Python 3.7 or higher
-- OpenAI API key (for natural language processing)
-- `openai` Python package
+This project simulates a basic interaction between two agents, Alice and Bob, using the OpenAI API. The agents can have conversations, perform tasks, and form relationships. The simulation uses a scheduler to keep track of time and manage the agents' actions.
 
 ## Setup
 
-Create a virtual environment:
-`python -m venv venv`
+1. Install Python 3.7 or higher.
 
-## Usage
+2. Clone the repository.
+`git clone https://github.com/yourusername/yourrepository.git`
 
-To run Simulacra, simply execute the `main.py` file:
+3. Change the directory.
+`cd yourrepository`
 
-Start the venv:
-`source venv/bin/activate`
+4. Set up a virtual environment.
+`python3 -m venv venv`
 
-Start the app:
-`python3 main.py`
+5. Activate the virtual environment.
+```
+source venv/bin/activate # For Linux and macOS
+venv\Scripts\activate # For Windows
+```
 
-You will be presented with a command prompt where you can enter different commands to interact with the agents. The available commands are:
+6. Install the required packages.
+`pip install -r requirements.txt`
 
-- `talk`: Simulate a conversation between two agents.
-- `add_task`: Add a task for an agent to perform at a certain time.
-- `perform_tasks`: Perform all tasks scheduled for an agent at the current time.
-- `recall`: Search an agent's memories for specific keywords.
-- `step`: Move the simulation forward by one time step.
-- `quit`: Exit the simulation.
 
 ## Configuration
+
+1. Create an OpenAI account and obtain your API key.
+
+2. Replace the placeholder API key in `main.py` with your own API key.
+```python
+openai.api_key = "your-api-key"
+```
+
+## Usage
+Run the main script.
+
+`python main.py`
+
+Follow the on-screen instructions to interact with the agents. You can issue the following commands:
+
+- talk: Make the agents have a conversation.
+- recall: Display an agent's long-term memories.
+- add_task: Add a task for an agent to perform.
+- perform_tasks: (Deprecated) Tasks are now performed automatically during the step command.
+- step: Move the simulation forward by one time unit.
+- quit: Exit the simulation.
+
+## Files
+- main.py: The main script that runs the simulation.
+- agent.py: Contains the Agent class definition, which represents an individual agent.
+- scheduler.py: Contains the Scheduler class definition, which manages the agents' actions over time.
+
+## License
+This project is licensed under the MIT License.

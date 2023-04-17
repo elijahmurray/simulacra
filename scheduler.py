@@ -5,5 +5,5 @@ class Scheduler:
 
     def step(self):
         for agent in self.agents:
-            agent.perform_tasks(self.time)  # Pass the current time
+            agent.step()
         self.time += 1

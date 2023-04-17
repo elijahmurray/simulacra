@@ -9,29 +9,47 @@ def main():
     alice_personality = {"friendliness": 0.2, "formality": 0.2}
     bob_personality = {"friendliness": 0.2, "formality": 0.3}
 
-    alice = Agent(
+    agent1 = Agent(
         "Alice",
         personality=alice_personality,
         background="Alice is a software engineer who loves hiking and playing video games in her free time.",
     )
-    bob = Agent(
+    agent2 = Agent(
         "Bob",
         personality=bob_personality,
         background="Bob is a sales executive with 10 years of experience in the technology industry. He is known for his outgoing personality and exceptional communication skills. In his free time, Bob enjoys playing basketball and volunteering at his local animal shelter. He is married with two children and enjoys spending time with his family.",
     )
 
-    agents = {"alice": alice, "bob": bob}
+    scheduler = Scheduler([agent1, agent2])
 
-    alice.form_relationship(bob)
+    agents = {"alice": agent1, "bob": agent2}
 
-    alice.add_task("Go to the grocery store", 1)
-    bob.add_task("Go to the park", 2)
+    # Add tasks for both agents
+    agent1.add_task("make breakfast", 1)
+    agent2.add_task("go for a walk", 1)
 
-    scheduler = Scheduler([alice, bob])
+    # Perform tasks at time 1
+    agent1.perform_tasks(1)
+    agent2.perform_tasks(1)
 
-    # num_conversations = 1  # Change this to the number of conversations you want
-    # for _ in range(num_conversations):
-    # agents["alice"].talk(agents["bob"])
+    # Have a conversation
+    agent1.talk(agent2)
+
+    # Form a relationship
+    agent1.form_relationship(agent2, initial_strength=5)
+
+    # Update the relationship
+    agent1.update_relationship(agent2, 2)
+
+    # Check memory and search for specific memories
+    agent1_memories = agent1.long_term_memory
+    agent2_memories = agent2.long_term_memory
+    print("Agent1 memories related to breakfast:", agent1_memories)
+    print("Agent2 memories related to walk:", agent2_memories)
+
+    # Perform a step (reflect and plan) for both agents
+    agent1.step()
+    agent2.step()
 
     while True:
         command = input(
@@ -40,7 +58,7 @@ def main():
         if command == "quit":
             break
         elif command == "step":
-            scheduler.step()  # Add this line
+            scheduler.step()
         elif command in {"talk", "recall", "add_task", "perform_tasks"}:
             agent_name = input("Which agent? (alice or bob): ").lower()
             if agent_name in agents:
@@ -49,22 +67,18 @@ def main():
                         other_agent_name = "bob" if agent_name == "alice" else "alice"
                         agents[agent_name].talk(agents[other_agent_name])
                 elif command == "recall":
-                    # Below commented code is for searching memories
-                    # query = input("Enter a search query: ")
-                    # memories = agents[agent_name].search_memory(query)
-                    # print(f"{agent_name.capitalize()}'s memories related to '{query}':")
-                    memories = agents[agent_name].memories
+                    memories = agents[agent_name].long_term_memory
                     print(f"{agent_name.capitalize()}'s memories:")
                     for memory in memories:
                         print("-", memory)
                 elif command == "add_task":
                     task = input("Enter a task description: ")
                     time = int(input("Enter the scheduled time for the task: "))
-                    agents[agent_name].add_task(task, time)  # Add the time parameter
+                    agents[agent_name].add_task(task, time)
                 elif command == "perform_tasks":
-                    agents[agent_name].perform_tasks(
-                        scheduler.time
-                    )  # Pass the current time
+                    print(
+                        "Tasks are now performed automatically during the step command."
+                    )
             else:
                 print("Invalid agent name. Try again.")
         else:
