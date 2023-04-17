@@ -4,12 +4,21 @@ from agent import Agent
 
 openai.api_key = "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"
 
-def main():
-    alice_personality = {"friendliness": 0.8, "formality": 0.2}
-    bob_personality = {"friendliness": 0.5, "formality": 0.7}
 
-    alice = Agent("Alice", personality=alice_personality, background="Alice is a software engineer who loves hiking and playing video games in her free time.")
-    bob = Agent("Bob", personality=bob_personality, background="Bob is a sales executive with 10 years of experience in the technology industry. He is known for his outgoing personality and exceptional communication skills. In his free time, Bob enjoys playing basketball and volunteering at his local animal shelter. He is married with two children and enjoys spending time with his family.")
+def main():
+    alice_personality = {"friendliness": 0.2, "formality": 0.2}
+    bob_personality = {"friendliness": 0.2, "formality": 0.3}
+
+    alice = Agent(
+        "Alice",
+        personality=alice_personality,
+        background="Alice is a software engineer who loves hiking and playing video games in her free time.",
+    )
+    bob = Agent(
+        "Bob",
+        personality=bob_personality,
+        background="Bob is a sales executive with 10 years of experience in the technology industry. He is known for his outgoing personality and exceptional communication skills. In his free time, Bob enjoys playing basketball and volunteering at his local animal shelter. He is married with two children and enjoys spending time with his family.",
+    )
 
     agents = {"alice": alice, "bob": bob}
 
@@ -20,12 +29,14 @@ def main():
 
     scheduler = Scheduler([alice, bob])
 
-    num_conversations = 1  # Change this to the number of conversations you want
-    for _ in range(num_conversations):
-        agents['alice'].talk(agents['bob'])
+    # num_conversations = 1  # Change this to the number of conversations you want
+    # for _ in range(num_conversations):
+    # agents["alice"].talk(agents["bob"])
 
     while True:
-        command = input("Enter command (talk, recall, add_task, perform_tasks, step, or quit): ")
+        command = input(
+            "Enter command (talk, recall, add_task, perform_tasks, step, or quit): "
+        )
         if command == "quit":
             break
         elif command == "step":
@@ -51,11 +62,14 @@ def main():
                     time = int(input("Enter the scheduled time for the task: "))
                     agents[agent_name].add_task(task, time)  # Add the time parameter
                 elif command == "perform_tasks":
-                    agents[agent_name].perform_tasks(scheduler.time)  # Pass the current time
+                    agents[agent_name].perform_tasks(
+                        scheduler.time
+                    )  # Pass the current time
             else:
                 print("Invalid agent name. Try again.")
         else:
             print("Invalid command. Try again.")
+
 
 if __name__ == "__main__":
     main()

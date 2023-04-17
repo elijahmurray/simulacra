@@ -1,22 +1,37 @@
 import openai
 import random
 
+
 class Agent:
     def __init__(self, name, personality=None, background=None):
         self.name = name
         self.memories = []
-        self.personality = personality if personality else {"friendliness": 0.5, "formality": 0.5}
+        self.personality = (
+            personality if personality else {"friendliness": 0.5, "formality": 0.5}
+        )
         self.current_action = None
         self.tasks = []
         self.experiences = []
         self.relationships = {}
         self.add_memory(f"My name is {name}")
-        self.background = background if background else "This is the default background for me, {self.name}."
+        self.background = (
+            background
+            if background
+            else "This is the default background for me, {self.name}."
+        )
         self.conversation_length = 0
-        self.goodbye_triggers = ["bye", "goodbye", "talk to you later", "see you later", "take care"]
-
+        self.goodbye_triggers = [
+            "bye",
+            "goodbye",
+            "talk to you later",
+            "see you later",
+            "take care",
+        ]
 
         # Add the agent's background to their memories
+        self.add_memory(
+            f"{self.name}'s friendliness out of 1.0 is {self.personality['friendliness']} and formality out of 1.0 is {self.personality['formality']}."
+        )
         self.add_memory(self.background)
 
     def generate_response(self, prompt):
@@ -33,7 +48,7 @@ class Agent:
             ],
         )
 
-        generated_response = response['choices'][0]['message']['content']
+        generated_response = response["choices"][0]["message"]["content"]
         return generated_response.strip()
 
     def generate_response_for_speaker(self, speaker, listener, prompt):
@@ -63,7 +78,11 @@ class Agent:
             end_prob = 1.0
         else:
             end_prob = 0.0
-        if "boring" in content.lower() or "pointless" in content.lower() or "enough" in content.lower():
+        if (
+            "boring" in content.lower()
+            or "pointless" in content.lower()
+            or "enough" in content.lower()
+        ):
             end_prob += 0.2
         elif "interesting" in content.lower() or "fascinating" in content.lower():
             end_prob -= 0.2
@@ -79,31 +98,25 @@ class Agent:
                 listener = agents[(i + 1) % 2]
 
                 if content is not None:
-                    prompt = f"{listener.name} said: {content}\n{speaker.name} responds:"
-                    content = self.generate_response(prompt)
+                    prompt = (
+                        f"{listener.name} said: {content}\n{speaker.name} responds:"
+                    )
+                    content = self.generate_response_for_speaker(
+                        speaker, listener, prompt
+                    )
                     if content is None:
                         continue
-                    print(f"{speaker.name} says: {content}")
                 else:
-                    prompt = f"{listener.name} says:"
-                    content = self.generate_response(prompt)
-                    if content is None:
-                        continue
-                    print(f"{listener.name} says: {content}")
-                    listener.add_memory(f"Heard {speaker.name} say: {content}")
+                    content = self.generate_response_for_listener(speaker, listener)
 
                 conversation_ended = self.should_end_conversation(speaker, content)
                 if conversation_ended:
-                    print(f"{speaker.name} says: Hey, sorry, but I gotta run.")
-                    print(f"{listener.name} says: Goodbye!")
+                    # Have the speaker say goodbye
+                    prompt = f"{listener.name} said: {content}\n{self.name} says:"
+                    self.generate_response_for_speaker(speaker, listener, prompt)
                     break
 
                 speaker.conversation_length += 1
-
-
-
-
-
 
     def add_memory(self, memory):
         self.memories.append(memory)
@@ -123,8 +136,9 @@ class Agent:
         response = self.generate_response(prompt)
         print(f"{other_agent.name} responds: {response}")
         self.add_memory(f"Greeted {other_agent.name}.")
-        other_agent.add_memory(f"Was greeted by {self.name} and responded with: {response}")
-
+        other_agent.add_memory(
+            f"Was greeted by {self.name} and responded with: {response}"
+        )
 
     def perform_action(self, action):
         self.current_action = action
@@ -152,6 +166,7 @@ class Agent:
         # Implement logic to make decisions based on experiences and relationships.
         # For simplicity, you can randomly choose a task for now.
         import random
+
         if self.tasks:
             return random.choice(self.tasks)
         return None
