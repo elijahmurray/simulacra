@@ -5,8 +5,11 @@ from agent import Agent
 openai.api_key = "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"
 
 def main():
-    alice = Agent("Alice")
-    bob = Agent("Bob")
+    alice_personality = {"friendliness": 0.8, "formality": 0.2}
+    bob_personality = {"friendliness": 0.5, "formality": 0.7}
+
+    alice = Agent("Alice", personality=alice_personality, background="Alice is a software engineer who loves hiking and playing video games in her free time.")
+    bob = Agent("Bob", personality=bob_personality, background="Bob is a sales executive with 10 years of experience in the technology industry. He is known for his outgoing personality and exceptional communication skills. In his free time, Bob enjoys playing basketball and volunteering at his local animal shelter. He is married with two children and enjoys spending time with his family.")
 
     agents = {"alice": alice, "bob": bob}
 
@@ -17,7 +20,7 @@ def main():
 
     scheduler = Scheduler([alice, bob])
 
-    num_conversations = 3  # Change this to the number of conversations you want
+    num_conversations = 1  # Change this to the number of conversations you want
     for _ in range(num_conversations):
         agents['alice'].talk(agents['bob'])
 
@@ -31,14 +34,16 @@ def main():
             agent_name = input("Which agent? (alice or bob): ").lower()
             if agent_name in agents:
                 if command == "talk":
-                    agent_name = input("Which agent? (alice or bob): ").lower()
                     if agent_name in agents:
                         other_agent_name = "bob" if agent_name == "alice" else "alice"
                         agents[agent_name].talk(agents[other_agent_name])
                 elif command == "recall":
-                    query = input("Enter a search query: ")
-                    memories = agents[agent_name].search_memory(query)
-                    print(f"{agent_name.capitalize()}'s memories related to '{query}':")
+                    # Below commented code is for searching memories
+                    # query = input("Enter a search query: ")
+                    # memories = agents[agent_name].search_memory(query)
+                    # print(f"{agent_name.capitalize()}'s memories related to '{query}':")
+                    memories = agents[agent_name].memories
+                    print(f"{agent_name.capitalize()}'s memories:")
                     for memory in memories:
                         print("-", memory)
                 elif command == "add_task":
