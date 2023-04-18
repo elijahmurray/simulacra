@@ -51,7 +51,38 @@ class Agent:
 
     def step(self):
         self.reflect()
-        self.plan()
+
+        action = random.choice(
+            ["add_task", "perform_task", "interact", "form_relationship"]
+        )
+
+        if action == "add_task":
+            self.autonomous_add_task()
+        elif action == "perform_task":
+            self.perform_tasks(self.scheduler.time)
+        elif action == "interact":
+            other_agent = random.choice(self.scheduler.agents)
+            if other_agent != self:
+                self.talk(other_agent)
+        elif action == "form_relationship":
+            other_agent = random.choice(self.scheduler.agents)
+            if other_agent != self and other_agent.name not in self.relationships:
+                self.form_relationship(other_agent)
+
+    def autonomous_add_task(self):
+        task_pool = [
+            "make breakfast",
+            "go for a walk",
+            "clean the room",
+            "work out",
+            "read a book",
+            "call a friend",
+            "watch TV",
+            "go shopping",
+        ]
+        task = random.choice(task_pool)
+        time = self.scheduler.time + random.randint(1, 5)
+        self.add_task(task, time)
 
     def generate_response(self, prompt):
         context = f"{self.name} is a person with the following memories: {', '.join(self.long_term_memory)}."
