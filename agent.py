@@ -1,5 +1,7 @@
 import openai
 import random
+import re
+from datetime import timedelta
 
 
 class Agent:
@@ -14,6 +16,7 @@ class Agent:
         self.short_term_memory = []
         self.long_term_memory = []
         self.conversation_length = 0
+        self.steps = 0
         self.goodbye_triggers = [
             "bye",
             "goodbye",
@@ -69,6 +72,13 @@ class Agent:
             if other_agent != self and other_agent.name not in self.relationships:
                 self.form_relationship(other_agent)
 
+        # Transfer short-term memories to long-term memory every 10 steps
+        if self.steps % 10 == 0:
+            self.transfer_to_long_term_memory()
+
+        # Increment the steps attribute
+        self.steps += 1
+
     def autonomous_add_task(self):
         task_pool = [
             "make breakfast",
@@ -81,11 +91,15 @@ class Agent:
             "go shopping",
         ]
         task = random.choice(task_pool)
-        time = self.scheduler.time + random.randint(1, 5)
+        time = self.scheduler.time + timedelta(minutes=random.randint(30, 150))
         self.add_task(task, time)
 
     def generate_response(self, prompt):
-        context = f"{self.name} is a person with the following memories: {', '.join(self.long_term_memory)}."
+        # Limit memories to the last 10 items
+        short_term_memories = ", ".join(self.short_term_memory[-10:])
+        long_term_memories = ", ".join(self.long_term_memory[-10:])
+
+        context = f"{self.name} is a person with the following short-term memories: {short_term_memories} and long-term memories: {long_term_memories}."
 
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -117,14 +131,25 @@ class Agent:
                         continue
                 else:
                     prompt = (
-                        f"{speaker.name} starts a conversation with {listener.name}:"
+                        f"{speaker.name}, say something interesting to {listener.name}:"
                     )
                     content = speaker.generate_response(prompt)
 
+                print("\n" + "-" * 40)
                 print(f"{speaker.name} says: {content}")
+                print("-" * 40 + "\n")
                 listener.add_to_short_term_memory(
                     f"Heard {speaker.name} say: {content}"
                 )
+                # Extract and add tasks from conversation
+                tasks = self.extract_tasks_from_conversation(content)
+                for task in tasks:
+                    scheduled_time = self.schedule_task(task)
+                    self.add_task(task, scheduled_time)
+                    other_agent.add_task(task, scheduled_time)
+                    print(
+                        f"Added task '{task}' for both agents at time {scheduled_time}"
+                    )
 
                 conversation_ended = speaker.should_end_conversation(content)
                 if conversation_ended:
@@ -153,12 +178,57 @@ class Agent:
             end_prob -= 0.2
         return random.random() < end_prob
 
+    def extract_tasks_from_conversation(self, content):
+        task_phrases = ["let's ", "we should ", "we can ", "how about we "]
+        tasks = []
+
+        for phrase in task_phrases:
+            regex_pattern = re.escape(phrase) + r"([\w\s]+)"
+            matches = re.findall(regex_pattern, content.lower())
+            tasks.extend(matches)
+
+        return tasks
+
+    def schedule_task(self, task):
+        current_time = self.scheduler.time
+        # Round the current time to the nearest 30-minute mark
+        minutes = (current_time.minute // 30) * 30
+        rounded_time = current_time.replace(minute=minutes, second=0, microsecond=0)
+
+        # Schedule the task for a random 30-minute interval in the next 24 hours
+        time_slots = 2 * 24  # 2 slots per hour, for 24 hours
+        future_slots = random.randint(1, time_slots)
+        scheduled_time = rounded_time + timedelta(minutes=30 * future_slots)
+        self.add_task(task, scheduled_time)
+        return scheduled_time
+
     def perform_action(self, action):
         self.current_action = action
         # Add code to execute the action or update the agent's state
 
-    def add_task(self, task, time):
-        self.tasks.append({"description": task, "time": time})
+    def add_task(self, task, time, urgency=0.5, importance=0.5, preference=0.5):
+        self.tasks.append(
+            {
+                "description": task,
+                "time": time,
+                "urgency": urgency,
+                "importance": importance,
+                "preference": preference,
+            }
+        )
+
+    def decide_on_task(self):
+        if self.tasks:
+            # Calculate priority based on urgency, importance, and preference
+            for task in self.tasks:
+                task["priority"] = (
+                    task["urgency"] + task["importance"] + task["preference"]
+                )
+
+            # Choose the task with the highest priority
+            highest_priority_task = max(self.tasks, key=lambda x: x["priority"])
+            return highest_priority_task
+        return None
 
     def perform_tasks(self, current_time):
         tasks_to_perform = [task for task in self.tasks if task["time"] == current_time]

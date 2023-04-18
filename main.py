@@ -35,33 +35,6 @@ def main():
 
     agents = {"alice": agent1, "bob": agent2}
 
-    # # Add tasks for both agents
-    # agent1.add_task("make breakfast", 1)
-    # agent2.add_task("go for a walk", 1)
-
-    # # Perform tasks at time 1
-    # agent1.perform_tasks(1)
-    # agent2.perform_tasks(1)
-
-    # # Have a conversation
-    # agent1.talk(agent2)
-
-    # # Form a relationship
-    # agent1.form_relationship(agent2, initial_strength=5)
-
-    # # Update the relationship
-    # agent1.update_relationship(agent2, 2)
-
-    # # Check memory and search for specific memories
-    # agent1_memories = agent1.long_term_memory
-    # agent2_memories = agent2.long_term_memory
-    # print("Agent1 memories related to breakfast:", agent1_memories)
-    # print("Agent2 memories related to walk:", agent2_memories)
-
-    # # Perform a step (reflect and plan) for both agents
-    # agent1.step()
-    # agent2.step()
-
     while True:
         command = input(
             "Enter command (talk, recall, add_task, perform_tasks, step, or quit): "
