@@ -24,6 +24,11 @@ venv\Scripts\activate # For Windows
 6. Install the required packages.
 `pip install -r requirements.txt`
 
+7. Setup your openAI key
+`cp .env.template .env`
+
+Edit the `.env` file to put in your OpenAI private key
+
 
 ## Configuration
 

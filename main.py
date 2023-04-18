@@ -1,8 +1,13 @@
 import openai
 from scheduler import Scheduler
 from agent import Agent
+import dotenv
+import os
 
-openai.api_key = "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"
+
+dotenv.load_dotenv()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def main():
@@ -12,7 +17,7 @@ def main():
     agent1 = Agent(
         "Alice",
         personality=alice_personality,
-        background="Alice is a software engineer who loves hiking and playing video games in her free time.",
+        background="Meet Alice, a 25-year-old software developer from Chicago. Growing up in a family of engineers, Alice was always drawn to technology and coding. She earned her bachelor's degree in computer science from the University of Illinois and landed a job at a tech company in Silicon Valley. Alice is known for her problem-solving skills and attention to detail, which have earned her a reputation as a reliable and efficient developer. Outside of work, Alice enjoys hiking and exploring the outdoors, as well as reading science fiction novels. Her calm and composed demeanor helps her navigate through high-pressure situations both in her personal and professional life.",
     )
     agent2 = Agent(
         "Bob",

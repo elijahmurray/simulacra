@@ -130,9 +130,7 @@ class Agent:
                     if content is None:
                         continue
                 else:
-                    prompt = (
-                        f"{speaker.name}, say something interesting to {listener.name}:"
-                    )
+                    prompt = f"{speaker.name}, start a converation with {listener.name}, and see where the conversation leads you. You may want to talk about shared memories, make plans, deepen your relationship, or talk about anything you want to:"
                     content = speaker.generate_response(prompt)
 
                 print("\n" + "-" * 40)
