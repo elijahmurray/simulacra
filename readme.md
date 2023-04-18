@@ -2,6 +2,10 @@
 
 This project simulates a basic interaction between two agents, Alice and Bob, using the OpenAI API. The agents can have conversations, perform tasks, and form relationships. The simulation uses a scheduler to keep track of time and manage the agents' actions.
 
+Inspired by the Stanford x Google experiment in generative agent human simulating interactions.
+
+Very much a WIP currently. See roadmap below.
+
 ## Setup
 
 1. Install Python 3.7 or higher.
@@ -58,5 +62,24 @@ Follow the on-screen instructions to interact with the agents. You can issue the
 - agent.py: Contains the Agent class definition, which represents an individual agent.
 - scheduler.py: Contains the Scheduler class definition, which manages the agents' actions over time.
 
+## Roadmap
+
+[x] Agent
+[x] Global time
+[x] Dialogue
+[x] Task management
+[x] Task extraction from dialogue
+[x] more realistic dialogue
+[x] OpenAI setup + dialogue
+[x] Simple memory system (long term + short term)
+[ ] Daily planning
+[ ] Goal setting, objectives, and long term planning
+[ ] Robust long term and short term memory truncating
+[ ] God mode
+[ ] Environment interaction
+[ ] More personality, traits, and emotions
+[ ] Suggestions?
+
 ## License
 This project is licensed under the MIT License.
+
