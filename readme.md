@@ -64,21 +64,21 @@ Follow the on-screen instructions to interact with the agents. You can issue the
 
 ## Roadmap
 
-[x] Agent
-[x] Global time
-[x] Dialogue
-[x] Task management
-[x] Task extraction from dialogue
-[x] more realistic dialogue
-[x] OpenAI setup + dialogue
-[x] Simple memory system (long term + short term)
-[ ] Daily planning
-[ ] Goal setting, objectives, and long term planning
-[ ] Robust long term and short term memory truncating
-[ ] God mode
-[ ] Environment interaction
-[ ] More personality, traits, and emotions
-[ ] Suggestions?
+- [x] Agent
+- [x] Global time
+- [x] Dialogue
+- [x] Task management
+- [x] Task extraction from dialogue
+- [x] more realistic dialogue
+- [x] OpenAI setup + dialogue
+- [x] Simple memory system (long term + short term)
+- [ ] Daily planning
+- [ ] Goal setting, objectives, and long term planning
+- [ ] Robust long term and short term memory truncating
+- [ ] God mode
+- [ ] Environment interaction
+- [ ] More personality, traits, and emotions
+- [ ] Suggestions?
 
 ## License
 This project is licensed under the MIT License.
