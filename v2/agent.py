@@ -12,13 +12,13 @@ class Agent:
     def step_checker(self):
         self.create_observation()
 
-        if self.should_i_reflect():
-            self.create_reflection()
+        # if self.should_i_reflect():
+        #     self.create_reflection()
 
-        if self.should_i_plan():
-            self.create_plan()
+        # if self.should_i_plan():
+        #     self.create_plan()
 
-        self.determine_next_action()
+        # self.determine_next_action()
 
     def create_current_action_statement(self):
         print("pending")
@@ -30,7 +30,7 @@ class Agent:
         return openai_handler
 
     def create_observation(self):
-        print("pending")
+        print("Observation")
         # (natural_language)
 
     def create_plan(self):

@@ -1,4 +1,5 @@
 from agent import Agent
+from world_clock import WorldClock
 
 
 def main():
@@ -6,12 +7,16 @@ def main():
         "Alice",
     )
 
+    agents = [agent]
+
+    world_clock = WorldClock()
+
     while True:
         command = input("Enter command (step): ")
         if command == "quit":
             break
         elif command == "step":
-            print("Stepping...")
+            world_clock.advance_time(agents)
         else:
             print("Invalid agent name. Try again.")
 

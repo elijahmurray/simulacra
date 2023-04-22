@@ -16,8 +16,8 @@ class OpenAIHandler:
         messages = [
             {"role": "user", "content": "prompt"},
         ]
-        # if context:
-        #     messages.append({"role": "system", "content": context})
+        if context:
+            messages.append({"role": "system", "content": context})
 
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
