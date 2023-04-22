@@ -1,4 +1,5 @@
-# import MEMORY_IMPORTANCE_PROMPT from 'prompts'
+from PROMPTS_CONSTANTS import MEMORY_IMPORTANCE_PROMPT
+from datetime import datetime as Datetime
 
 MEMORY_TYPES = ["observation", "plan", "reflection"]
 
@@ -13,8 +14,8 @@ class Memory:
         self.description = self.description
         self.type = enumerate[MEMORY_TYPES]
 
-    def generate_description(self):
-        response = call_openai(prompt)
+    def generate_description(self, prompt):
+        response = self.call_openai(prompt)
         # observation sample description: <Agent> is <active action> [preposition i.e. on/to/with] <environment object OR agent>
         # plan sample output description:
         # reflection sample output description:
@@ -22,7 +23,7 @@ class Memory:
 
     def generate_importance(self):
         prompt = MEMORY_IMPORTANCE_PROMPT + self.description
-        importance = call_openai(prompt)
+        importance = self.call_openai(prompt)
         return importance
 
     def call_openai(prompt):

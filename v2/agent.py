@@ -1,11 +1,12 @@
-# import BIOGRAPHICAL_MEMORY from prompts
+from PROMPTS_CONSTANTS import BIOGRAPHICAL_MEMORY_1, WHAT_SHOULD_I_REFLECT_ON
 import openai_handler
+import memory as Memory
 
 
 class Agent:
     def __init__(self, name):
         self.name = name
-        self.biography = self.create_biographical_memory(BIOGRAPHY_1)
+        self.biography = self.create_biographical_memory(BIOGRAPHICAL_MEMORY_1)
 
     def step_checker(self):
         self.create_observation
@@ -48,8 +49,10 @@ class Agent:
 
     def what_should_i_reflect_on(self):
         name = self.name
-        recent_memories = memories.where(name=name)[-1..100]
-        reflection_questions = openai_handler(WHAT_SHOULD_I_REFLECT_ON + recent_memories)
+        recent_memories = Memory.where(type="reflection").last(100)  # pseudo code
+        reflection_questions = openai_handler(
+            WHAT_SHOULD_I_REFLECT_ON + recent_memories
+        )
 
         return reflection_questions
 
