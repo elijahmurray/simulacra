@@ -1,21 +1,40 @@
+import json
+from environment import Environment
 from agent import Agent
-from world_operations import create_world
-from game_loop import game_loop
-from threading import Thread
-from server import app
+from config import SIM_CLOCK_INCREMENT
+from copy import deepcopy
 
-if __name__ == "__main__":
-    world = create_world()
+def main():
 
-    # Initialize agents
-    agents = [
-        Agent("Agent1", "Agent1 is a curious explorer.", world),
-        Agent("Agent2", "Agent2 is a cautious observer.", world)
-    ]
+  # INSTANTIATE ENVIRONMENT
+  enviornment = Environment()
+  world = enviornment.world
 
-    # Start the game loop in a separate thread
-    game_loop_thread = Thread(target=game_loop, args=(agents,))
-    game_loop_thread.start()
+  # INSTANTIATE AGENTS
+  agents = []
+  with open('init_data/agent_config.json') as f:
+    agent_config = json.load(f)
+  for agent in agent_config['agents']:
+    agents.append(Agent(agent, world))
 
-    # Start the Flask server
-    app.run(port=3000)
+  # INSTANTIATE SIMULATION STATE
+  state = deepcopy(world)
+  for agent in agents:
+    location_path = agent.location.split(":")
+    print(state["buildings"][location_path[0]][location_path[1]])
+    state["buildings"][location_path[0]][location_path[1]]['occupants'] = []
+    state["buildings"][location_path[0]][location_path[1]]['occupants'].append(agent.name)
+  json.dump(state, open('server_data/environment_state.json', 'w'))
+
+  # START SIMULATION
+  sim_clock = 0
+  while True:
+    for agent in agents:
+      print(agent.name, agent.location)
+      #agent.observe(world, agent.location)
+      #agent.plan()
+      #agent.react()
+    sim_clock += SIM_CLOCK_INCREMENT
+
+if __name__ == '__main__':
+  main()

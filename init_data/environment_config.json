@@ -1,0 +1,118 @@
+{
+  "world": {
+    "name": "Seahaven",
+    "buildings": [
+      {
+        "name": "Truman's House",
+        "type": "house",
+        "rooms": [
+          {
+            "name": "Living Room",
+            "objects": [
+              {"name": "Couch", "type": "seat", "state": "idle"},
+              {"name": "TV", "type": "device", "state": "idle"},
+              {"name": "Coffee Table", "type": "surface", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ]
+          },
+          {
+            "name": "Kitchen",
+            "objects": [
+              {"name": "Table", "type": "surface", "state": "idle"},
+              {"name": "Chair", "type": "seat", "state": "idle"},
+              {"name": "Stove", "type": "appliance", "state": "idle"},
+              {"name": "Fridge", "type": "container", "state": "idle"}
+            ]
+          },
+          {"name": "Bedroom",
+            "objects": [
+              {"name": "Bed", "type": "seat", "state": "idle"},
+              {"name": "Nightstand", "type": "surface", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ]
+          },
+          {
+            "name": "Bathroom",
+            "objects": [
+              {"name": "Toilet", "type": "seat", "state": "idle"},
+              {"name": "Sink", "type": "faucet", "state": "idle"},
+              {"name": "Shower", "type": "faucet", "state": "idle"}
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Marlon's House",
+        "type": "house",
+        "rooms": [
+          {
+            "name": "Living Room",
+            "objects": [
+              {"name": "Couch", "type": "seat", "state": "idle"},
+              {"name": "TV", "type": "device", "state": "idle"},
+              {"name": "Coffee Table", "type": "surface", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ]
+          },
+          {
+            "name": "Kitchen",
+            "objects": [
+              {"name": "Table", "type": "surface", "state": "idle"},
+              {"name": "Chair", "type": "seat", "state": "idle"},
+              {"name": "Stove", "type": "appliance", "state": "idle"},
+              {"name": "Fridge", "type": "container", "state": "idle"}
+            ]
+          },
+          {"name": "Bedroom",
+            "objects": [
+              {"name": "Bed", "type": "seat", "state": "idle"},
+              {"name": "Nightstand", "type": "surface", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ]
+          },
+          {
+            "name": "Bathroom",
+            "objects": [
+              {"name": "Toilet", "type": "seat", "state": "idle"},
+              {"name": "Sink", "type": "faucet", "state": "idle"},
+              {"name": "Shower", "type": "faucet", "state": "idle"}
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Seahaven Life & Accident Insurance",
+        "type": "office",
+        "rooms": [
+          {
+            "name": "Truman's Office",
+            "objects": [
+              {"name": "Desk", "type": "surface", "state": "idle"},
+              {"name": "Chair", "type": "seat", "state": "idle"},
+              {"name": "Computer", "type": "device", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ]
+          },
+          {
+            "name": "Marlon's Office",
+            "objects": [
+              {"name": "Desk", "type": "surface", "state": "idle"},
+              {"name": "Chair", "type": "seat", "state": "idle"},
+              {"name": "Computer", "type": "device", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ]
+          },
+          {
+            "name": "Conference Room",
+            "objects": [
+              {"name": "Table", "type": "surface", "state": "idle"},
+              {"name": "Chair", "type": "seat", "state": "idle"},
+              {"name": "TV", "type": "device", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ]
+          }
+      ]
+      }
+    ]
+  }
+}
