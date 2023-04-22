@@ -1,4 +1,4 @@
-from agent import Agent
+from agent.agent import Agent
 from world_clock import WorldClock
 
 

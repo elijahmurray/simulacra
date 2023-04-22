@@ -5,8 +5,8 @@ from APP_CONSTANTS import DEBUG_CONTEXT
 
 
 TIME_INCREMENT = 60  # in_minutes
-# START_TIME = datetime.datetime.now()
-START_TIME = datetime.datetime.now() + datetime.timedelta(hours=4.5)
+time_offset = datetime.timedelta(hours=0)
+START_TIME = datetime.datetime.now() + time_offset
 
 
 class WorldClock:
