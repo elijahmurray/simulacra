@@ -4,12 +4,12 @@ from world_clock import WorldClock
 
 def main():
     agent = Agent(
-        "Alice",
+        "John Lin",
     )
 
-    agents = [agent]
-
     world_clock = WorldClock()
+
+    agents = [agent]
 
     # Sample time advancement
     world_clock.advance_time(agents)

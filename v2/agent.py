@@ -1,35 +1,52 @@
 from PROMPTS_CONSTANTS import (
     BIOGRAPHICAL_MEMORY_1,
-    WHAT_SHOULD_I_REFLECT_ON_PROMPT,
     WHAT_SHOULD_I_OBSERVE_PROMPT,
     WHAT_SHOULD_I_DO_NEXT_PROMPT,
+    create_plan_prompt,
 )
 from APP_CONSTANTS import VERBOSE_MODE
 from openai_handler import OpenAIHandler
+
+from helpers import datetime_formatter
 
 import memory as Memory
 
 
 class Agent:
-    def __init__(self, name):
+    def __init__(self, name, age=19):
         self.name = name
         self.memories = []
         self.biography = self.create_biographical_memory(BIOGRAPHICAL_MEMORY_1)
+        self.current_datetime = None
+        self.age = age
 
-    def step_checker(self):
+    def step_checker(self, current_datetime):
+        self.current_datetime = current_datetime
         self.create_observation()
 
         # if self.should_i_reflect():
         #     self.create_reflection()
 
         # if self.should_i_plan():
-        #     self.create_plan()
+        self.create_plan()
 
         self.determine_next_action()
 
     def create_current_action_statement(self):
-        print("pending")
+        self.print_current_method("create_current_action_statement")
         # (natural_language)
+
+    def agent_summary(self):
+        summary = ""
+        basic_info = "\nName: " + self.name + " (age: " + str(self.age) + ")"
+        memories = ""
+        for memory in self.memories:
+            memories += "\n" + memory
+        yesterdays_acitivities = "\nYesterday, John 1) woke up and completed the morning routine at 7:00 am, 2) went to work, 3) ate lunch, 4) went to the gym, 5) ate dinner, 6) went to sleep at 10:00 pm"
+
+        summary += basic_info + yesterdays_acitivities + memories
+
+        return summary
 
     def create_biographical_memory(self, biography):
         seed_memories = biography
@@ -46,11 +63,41 @@ class Agent:
         self.print_response(response)
 
     def create_plan(self):
-        print("pending")
-        # (natural_language)
+        self.print_current_method("create_plan")
+        context = self.agent_summary()
+
+        print(
+            create_plan_prompt(
+                current_datetime=datetime_formatter(self.current_datetime),
+                agent_name=self.name,
+            )
+        )
+        print(
+            create_plan_prompt(
+                current_datetime=datetime_formatter(self.current_datetime),
+                agent_name=self.name,
+            )
+        )
+
+        response = (
+            OpenAIHandler(
+                context=context,
+                prompt=create_plan_prompt(
+                    current_datetime=datetime_formatter(self.current_datetime),
+                    agent_name=self.name,
+                ),
+            ).response,
+        )
+
+        if VERBOSE_MODE:
+            self.print_response("Plan: ")
+            print(response)
+
+        return response
 
     def should_i_plan(self):
-        print("pending")
+        self.print_current_method("should_i_plan")
+        # (natural_language)
 
     def should_i_reflect(self):
         self.print_current_method("should_i_reflect")
@@ -128,7 +175,9 @@ class Agent:
 
     def print_current_method(self, method):
         if VERBOSE_MODE:
-            print(f"\n==========================\n{method}\n==========================")
+            print(
+                f"\n==========================\nCALLED: {method}\n=========================="
+            )
         else:
             pass
 

@@ -2,6 +2,7 @@ import openai
 import dotenv
 import os
 from colorama import Fore, Back, Style
+from APP_CONSTANTS import DEBUG_PROMPTS
 
 
 from APP_CONSTANTS import VERBOSE_MODE
@@ -22,8 +23,15 @@ class OpenAIHandler:
 
         messages = []
 
-        for message in context:
-            messages.append({"role": "system", "content": message})
+        if DEBUG_PROMPTS:
+            print(f"{Fore.GREEN}\nContext: {context}{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}\nPrompt: {prompt}{Style.RESET_ALL}")
+
+        if isinstance(context, list):
+            for message in context:
+                messages.append({"role": "system", "content": message})
+        else:
+            messages.append({"role": "system", "content": context})
 
         messages.append(
             {"role": "user", "content": prompt},

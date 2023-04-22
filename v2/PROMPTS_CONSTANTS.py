@@ -16,3 +16,13 @@ BIOGRAPHICAL_MEMORY_2 = (
 WHAT_SHOULD_I_DO_NEXT_PROMPT = (
     "What should this person do next? (example format: [person's name] should [action])"
 )
+
+
+def create_plan_prompt(current_datetime, agent_name):
+    return (
+        "Today is "
+        + str(current_datetime)
+        + ". Here is "
+        + agent_name
+        + "'s plan for day in broad strokes: 1"
+    )
