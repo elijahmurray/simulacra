@@ -1,5 +1,6 @@
-from PROMPTS_CONSTANTS import BIOGRAPHICAL_MEMORY_1, WHAT_SHOULD_I_REFLECT_ON
-import openai_handler
+from PROMPTS_CONSTANTS import BIOGRAPHICAL_MEMORY_1, WHAT_SHOULD_I_REFLECT_ON_PROMPT
+from openai_handler import OpenAIHandler
+
 import memory as Memory
 
 
@@ -9,54 +10,67 @@ class Agent:
         self.biography = self.create_biographical_memory(BIOGRAPHICAL_MEMORY_1)
 
     def step_checker(self):
-        self.create_observation
+        self.create_observation()
 
-        if self.should_i_reflect:
-            self.create_reflection
+        if self.should_i_reflect():
+            self.create_reflection()
 
-        if self.should_i_plan:
-            self.create_plan
+        if self.should_i_plan():
+            self.create_plan()
 
-        self.determine_next_action
+        self.determine_next_action()
 
-    def create_current_action_statement():
+    def create_current_action_statement(self):
         print("pending")
         # (natural_language)
 
-    def create_biographical_memory(biography):
-        memories = biography.split
-        return openai_handler(prompt=memories)
+    def create_biographical_memory(self, biography):
+        memories = biography
+        openai_handler = OpenAIHandler(prompt=memories)
+        return openai_handler
 
-    def create_observation():
+    def create_observation(self):
         print("pending")
         # (natural_language)
 
-    def create_plan():
+    def create_plan(self):
         print("pending")
         # (natural_language)
 
-    def should_i_plan():
+    def should_i_plan(self):
         print("pending")
 
-    def should_i_reflect():
+    def should_i_reflect(self):
         print("pending")
-        # trigger:
-        # if memory[where type='reflection'].last.index > memory.most_recent.index - 100
-        # importance_of_memories = 0
-        # memories_to_evaluate.each(memory) {importance_of_memories += memory.importance}
-        # if importance_of_memories > REFLECTION_THRESHOLD then TRUE else FALSE
-        # output: [boolean]
+        last_100_memories = Memory.last(100)
+        number_of_reflections_in_last_100_memories = last_100_memories.where(
+            type="reflection"
+        ).count()
+
+        importance_of_memories = 0
+
+        if number_of_reflections_in_last_100_memories > 0:
+            return False
+        else:
+            importance_of_memories = last_100_memories.each(
+                lambda memory: memory.importance
+            ).sum(lambda importance: importance)
+            if importance_of_memories > REFLECTION_THRESHOLD:
+                return True
+            else:
+                return False
 
     def what_should_i_reflect_on(self):
         name = self.name
         recent_memories = Memory.where(type="reflection").last(100)  # pseudo code
-        reflection_questions = openai_handler(
-            WHAT_SHOULD_I_REFLECT_ON + recent_memories
+        openai_handler_instance = OpenAIHandler(
+            prompt=WHAT_SHOULD_I_REFLECT_ON + recent_memories
         )
+        reflection_questions = openai_handler_instance.response
 
         return reflection_questions
 
-    def create_reflection():
+    def create_reflection(self):
         print("pending")
         # inputs:
         # questions_to_reflect_on: # one of the questions from what_should_i_reflect_on?
@@ -64,7 +78,7 @@ class Agent:
         # prompt: # see CREATE_REFLECTION_PROMPT
         # output:
 
-    def retrieve_memories():
+    def retrieve_memories(self):
         print("pending")
 
     # inputs:
@@ -73,12 +87,14 @@ class Agent:
     #   recency: #exponential_decay_factor: 0.99
     #   relevancy: (natural_language) #generate an embedding vector of the text description of each memory. Then, we calculate relevance as the cosine similarity between the memory’s embedding vector and the query memory’s embedding vector.
     # outputs: array of retrieved memories
-    def prioritize_memories():  # normalize the recency, relevance, and importance scores to the range of [0, 1], then sum, then prioritize
+    def prioritize_memories(
+        self,
+    ):  # normalize the recency, relevance, and importance scores to the range of [0, 1], then sum, then prioritize
         print("pending")
 
     # input: retrieved_memories[]
     # output: prioritized_memories[]
-    def determine_next_action():
+    def determine_next_action(self):
         print("pending")
 
     # inputs: prioritized_memories[0..10]

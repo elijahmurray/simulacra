@@ -1,5 +1,5 @@
 import datetime
-import Agent
+import agent as Agent
 
 TIME_INCREMENT=5# in_minutes
 
