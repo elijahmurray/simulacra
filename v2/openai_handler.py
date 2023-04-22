@@ -2,7 +2,7 @@ import openai
 import dotenv
 import os
 from colorama import Fore, Back, Style
-from APP_CONSTANTS import DEBUG_PROMPTS
+from APP_CONSTANTS import DEBUG_PROMPTS, DEBUG_CONTEXT
 
 
 from APP_CONSTANTS import VERBOSE_MODE
@@ -18,14 +18,12 @@ class OpenAIHandler:
         self.response = self.query(prompt, context)
 
     def query(self, prompt, context=None):
-        if VERBOSE_MODE:
-            print(f"{Fore.GREEN}Querying OpenAI...{Style.RESET_ALL}")
-
         messages = []
 
+        if DEBUG_CONTEXT:
+            print(f"{Fore.GREEN}\n\nContext: {context}{Style.RESET_ALL}")
         if DEBUG_PROMPTS:
-            print(f"{Fore.GREEN}\nContext: {context}{Style.RESET_ALL}")
-            print(f"{Fore.GREEN}\nPrompt: {prompt}{Style.RESET_ALL}")
+            print(f"{Fore.MAGENTA}\n\nPrompt: {prompt}{Style.RESET_ALL}")
 
         if isinstance(context, list):
             for message in context:
@@ -36,6 +34,9 @@ class OpenAIHandler:
         messages.append(
             {"role": "user", "content": prompt},
         )
+
+        if DEBUG_PROMPTS or DEBUG_CONTEXT or VERBOSE_MODE:
+            print(f"{Fore.GREEN}Querying OpenAI...{Style.RESET_ALL}")
 
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",

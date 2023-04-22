@@ -3,7 +3,9 @@ import agent as Agent
 from helpers import datetime_formatter
 
 
-TIME_INCREMENT = 5  # in_minutes
+TIME_INCREMENT = 60  # in_minutes
+# START_TIME = datetime.datetime.now()
+START_TIME = datetime.datetime.now() + datetime.timedelta(days=0.5)
 
 
 class WorldClock:
@@ -12,11 +14,11 @@ class WorldClock:
         self.current_datetime = self.start_datetime
 
     def determine_start_time(self):
-        return datetime.datetime.now()
+        return START_TIME
 
     def advance_time(self, agents):
         pretty_date_time = datetime_formatter(self.current_datetime)
-        print("\nThe date and time is now: " + pretty_date_time)
+        print("\n> World Clock: " + pretty_date_time)
         for agent in agents:
             agent.step_checker(self.current_datetime)
         self.current_datetime += datetime.timedelta(minutes=TIME_INCREMENT)

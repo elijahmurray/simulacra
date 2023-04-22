@@ -1,11 +1,13 @@
 from PROMPTS_CONSTANTS import (
     BIOGRAPHICAL_MEMORY_1,
     WHAT_SHOULD_I_OBSERVE_PROMPT,
-    WHAT_SHOULD_I_DO_NEXT_PROMPT,
     create_plan_prompt,
+    what_should_i_do_next_prompt,
 )
 from APP_CONSTANTS import VERBOSE_MODE
 from openai_handler import OpenAIHandler
+
+from colorama import Fore, Back, Style
 
 from helpers import datetime_formatter
 
@@ -18,6 +20,7 @@ class Agent:
         self.memories = []
         self.biography = self.create_biographical_memory(BIOGRAPHICAL_MEMORY_1)
         self.current_datetime = None
+        self.next_action = None
         self.age = age
 
     def step_checker(self, current_datetime):
@@ -29,22 +32,25 @@ class Agent:
 
         # if self.should_i_plan():
         self.create_plan()
+        self.create_plan(detail_level=2)
+        # self.create_plan(detail_level=3)
 
         self.determine_next_action()
+        self.execute_next_action()
 
     def create_current_action_statement(self):
         self.print_current_method("create_current_action_statement")
         # (natural_language)
 
     def agent_summary(self):
+        #  (e.g., name, traits, and summary of their recent experiences)
         summary = ""
         basic_info = "\nName: " + self.name + " (age: " + str(self.age) + ")"
         memories = ""
         for memory in self.memories:
             memories += "\n" + memory
-        yesterdays_acitivities = "\nYesterday, John 1) woke up and completed the morning routine at 7:00 am, 2) went to work, 3) ate lunch, 4) went to the gym, 5) ate dinner, 6) went to sleep at 10:00 pm"
 
-        summary += basic_info + yesterdays_acitivities + memories
+        summary += basic_info + memories
 
         return summary
 
@@ -60,23 +66,25 @@ class Agent:
             context=context, prompt=WHAT_SHOULD_I_OBSERVE_PROMPT
         ).response
         self.store_memory(response)
-        self.print_response(response)
+        self.print_response(response, color=Fore.WHITE)
 
-    def create_plan(self):
-        self.print_current_method("create_plan")
-        context = self.agent_summary()
-
-        print(
-            create_plan_prompt(
-                current_datetime=datetime_formatter(self.current_datetime),
-                agent_name=self.name,
-            )
+    def previous_day_summary(self):
+        # TODO: this should be a memory
+        return (
+            "\nYesterday, on "
+            + datetime_formatter(self.current_datetime)
+            + ", "
+            + self.name
+            + " 1) woke up at 7:00AM, 2) went to work at 8:00AM, 3) ate lunch at 12:00PM, 4) went to the gym at 5:00PM, 5) ate dinner at 6:30PM, and 6) went to sleep at 10:00PM."
         )
-        print(
-            create_plan_prompt(
-                current_datetime=datetime_formatter(self.current_datetime),
-                agent_name=self.name,
-            )
+
+    def create_plan(self, detail_level=1):
+        self.print_current_method("create_plan")
+
+        context = (
+            datetime_formatter(self.current_datetime)
+            + self.agent_summary()
+            + self.previous_day_summary()
         )
 
         response = (
@@ -85,13 +93,16 @@ class Agent:
                 prompt=create_plan_prompt(
                     current_datetime=datetime_formatter(self.current_datetime),
                     agent_name=self.name,
+                    detail_level=detail_level,
                 ),
             ).response,
         )
 
+        self.store_memory(response)
+
         if VERBOSE_MODE:
             self.print_response("Plan: ")
-            print(response)
+            self.print_response(response)
 
         return response
 
@@ -156,16 +167,26 @@ class Agent:
     # output: prioritized_memories[]
     def determine_next_action(self):
         self.print_current_method("determine_next_action")
-        context = self.memories
+        context = self.agent_summary()
         # context = self.prioritize_memories()
         response = OpenAIHandler(
-            context=context, prompt=WHAT_SHOULD_I_DO_NEXT_PROMPT
+            context=context, prompt=what_should_i_do_next_prompt(self.name)
         ).response
 
         if VERBOSE_MODE:
             self.print_response("Next Action Determined: " + response)
 
+        self.next_action = response
+
         return response
+
+    def execute_next_action(self):
+        self.print_current_method("execute_next_action")
+        self.store_memory(self.next_action)
+
+        print("Action Taken: " + self.next_action)
+
+        return
 
     # inputs: prioritized_memories[0..10]
     # outputs: (natural_language)
@@ -176,16 +197,20 @@ class Agent:
     def print_current_method(self, method):
         if VERBOSE_MODE:
             print(
-                f"\n==========================\nCALLED: {method}\n=========================="
+                f"{Fore.RED}\n==========================\nCALLED: {method}\n=========================={Style.RESET_ALL}"
             )
         else:
             pass
 
-    def print_response(self, response):
+    def print_response(self, response, color=Fore.GREEN):
         if VERBOSE_MODE:
-            print(f"\nAPI Response - {response}")
+            print(f"Output> {response}")
         else:
             print(f"\n{response}")
 
     def store_memory(self, memory):
-        self.memories.append(memory)
+        if isinstance(memory, tuple):
+            for m in memory:
+                self.store_memory(m)
+        else:
+            self.memories.append(memory)

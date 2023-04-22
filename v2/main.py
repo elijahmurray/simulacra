@@ -14,6 +14,12 @@ def main():
     # Sample time advancement
     world_clock.advance_time(agents)
     world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
 
     # while True:
     #     command = input("Enter command (step): ")
