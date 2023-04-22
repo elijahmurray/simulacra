@@ -4,7 +4,7 @@ from helpers import datetime_formatter
 from APP_CONSTANTS import DEBUG_CONTEXT
 
 
-TIME_INCREMENT = 30  # in_minutes
+TIME_INCREMENT = 60  # in_minutes
 # START_TIME = datetime.datetime.now()
 START_TIME = datetime.datetime.now() + datetime.timedelta(hours=4.5)
 

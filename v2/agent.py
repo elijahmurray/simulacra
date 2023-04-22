@@ -1,7 +1,8 @@
 import pdb
 import re
-from PROMPTS_CONSTANTS import (
+from prompts import (
     BIOGRAPHICAL_MEMORY_1,
+    BIOGRAPHICAL_MEMORY_BERMAN,
     WHAT_SHOULD_I_OBSERVE_PROMPT,
     create_plan_prompt,
     what_should_i_do_next_prompt,
@@ -16,6 +17,7 @@ from helpers import (
     tuple_or_array_to_string,
     date_formatter,
     time_formatter,
+    output_formatter,
 )
 
 import memory as Memory
@@ -25,7 +27,8 @@ class Agent:
     def __init__(self, name, age=19):
         self.name = name
         self.memories = []
-        self.biography = self.create_biographical_memory(BIOGRAPHICAL_MEMORY_1)
+        # self.biography = self.create_biographical_memory(BIOGRAPHICAL_MEMORY_1)
+        self.biography = self.create_biographical_memory(BIOGRAPHICAL_MEMORY_BERMAN)
         self.current_datetime = None
         self.next_action = None
         self.age = age
@@ -116,6 +119,9 @@ class Agent:
             self.print_response("Plan: ")
             self.print_response(response)
 
+        # TODO: Make this work
+        # output_formatter(response)
+
         if detail_level == 2:
             self.store_memory(response)
             return response
@@ -124,7 +130,6 @@ class Agent:
 
     def should_i_plan(self):
         self.print_current_method("should_i_plan")
-        # (natural_language)
 
     def should_i_reflect(self):
         self.print_current_method("should_i_reflect")
@@ -174,6 +179,7 @@ class Agent:
     #   recency: #exponential_decay_factor: 0.99
     #   relevancy: (natural_language) #generate an embedding vector of the text description of each memory. Then, we calculate relevance as the cosine similarity between the memory’s embedding vector and the query memory’s embedding vector.
     # outputs: array of retrieved memories
+
     def prioritize_memories(
         self,
     ):  # normalize the recency, relevance, and importance scores to the range of [0, 1], then sum, then prioritize

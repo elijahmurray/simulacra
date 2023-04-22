@@ -3,9 +3,10 @@ from world_clock import WorldClock
 
 
 def main():
-    agent = Agent(
-        "John Lin",
-    )
+    # agent = Agent(
+    #     "John Lin",
+    # )
+    agent = Agent("Matt Berman")
 
     world_clock = WorldClock()
 

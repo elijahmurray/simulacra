@@ -20,3 +20,17 @@ def tuple_or_array_to_string(tuple_or_array):
 
 def time_formatter(datetime):
     return datetime.strftime("%I:%M%p")
+
+
+def output_formatter(response):
+    formatted_output = ""
+
+    if isinstance(response, tuple) or isinstance(response, list):
+        for r in response:
+            formatted_output += "\n" + r
+    elif isinstance(response, str):
+        formatted_output = response
+    else:
+        formatted_output = str(response)
+
+    return formatted_output

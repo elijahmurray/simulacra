@@ -1,4 +1,5 @@
-from PROMPTS_CONSTANTS import MEMORY_IMPORTANCE_PROMPT
+# CURRENTLY A STUB AND NOT USED
+from prompts import MEMORY_IMPORTANCE_PROMPT
 from datetime import datetime as Datetime
 
 MEMORY_TYPES = ["observation", "plan", "reflection"]
