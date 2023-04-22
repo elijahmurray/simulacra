@@ -11,7 +11,12 @@ from openai_handler import OpenAIHandler
 
 from colorama import Fore, Back, Style
 
-from helpers import datetime_formatter
+from helpers import (
+    datetime_formatter,
+    tuple_or_array_to_string,
+    date_formatter,
+    time_formatter,
+)
 
 import memory as Memory
 
@@ -67,7 +72,10 @@ class Agent:
             context=context, prompt=WHAT_SHOULD_I_OBSERVE_PROMPT
         ).response
         self.store_memory(response)
-        self.print_response(response, color=Fore.WHITE)
+        self.print_response(
+            "At " + time_formatter(self.current_datetime) + ", " + response,
+            color=Fore.WHITE,
+        )
 
     def previous_day_summary(self):
         # TODO: this should be a memory
@@ -80,7 +88,7 @@ class Agent:
         )
 
     def create_plan(self, higher_level_plan="", detail_level=1):
-        self.print_current_method("create_plan(" + str(detail_level) + ")")
+        self.print_current_method("create_plan(detail: " + str(detail_level) + ")")
 
         if detail_level == 1:
             context = (
@@ -88,9 +96,10 @@ class Agent:
                 + self.agent_summary()
                 + self.previous_day_summary()
             )
-
         if detail_level == 2:
-            context = datetime_formatter(self.current_datetime) + higher_level_plan[0]
+            context = datetime_formatter(
+                self.current_datetime
+            ) + tuple_or_array_to_string(higher_level_plan)
 
         response = (
             OpenAIHandler(
@@ -181,9 +190,6 @@ class Agent:
             prompt=what_should_i_do_next_prompt(self.name, self.current_datetime),
         ).response
 
-        if VERBOSE_MODE:
-            self.print_response("Next Action Determined: " + response)
-
         self.next_action = response
 
         return response
@@ -192,12 +198,8 @@ class Agent:
         self.print_current_method("execute_next_action")
         self.store_memory(self.next_action)
 
-        print("Action Taken: " + self.next_action)
-
         return
 
-    # inputs: prioritized_memories[0..10]
-    # outputs: (natural_language)
     # action_talk: (natural_language)
     # action_move: pathing_function
     # action_act_upon_world:
@@ -211,10 +213,7 @@ class Agent:
             pass
 
     def print_response(self, response, color=Fore.GREEN):
-        if VERBOSE_MODE:
-            print(f"Output> {response}")
-        else:
-            print(f"\n{response}")
+        print(f"\n{response}")
 
     def store_memory(self, memory):
         if isinstance(memory, list):
@@ -225,10 +224,3 @@ class Agent:
                 self.store_memory(m)
         else:
             self.memories.append(memory)
-
-    def parse_hourly_plan(plan_response):
-        hourly_activities = re.findall(
-            r"\d\)(.*?)\d\)", plan_response + "0)", re.DOTALL
-        )
-        activities = [activity.strip() for activity in hourly_activities]
-        return activities
