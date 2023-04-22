@@ -1,0 +1,91 @@
+#Methods
+agent:
+  create_current_action_statement: (natural_language)
+  create_observation: (natural_language)
+  create_plan:  (natural_language)
+  should_i_reflect?:
+    trigger: 
+      # if memory[where type='reflection'].last.index > memory.most_recent.index - 100
+        # importance_of_memories = 0
+        # memories_to_evaluate.each(memory) {importance_of_memories += memory.importance}
+        # if importance_of_memories > REFLECTION_THRESHOLD then TRUE else FALSE
+    output: [boolean]
+  what_should_i_reflect_on?:
+    input:
+      recent_memories: memories[-1..100]
+      evaluation: WHAT_SHOULD_REFLECT_ON?_PROMPT on recent_memories
+    output: # 3 to 5 questions_to_reflect_on
+  create_reflection:
+    inputs:
+      questions_to_reflect_on: # one of the questions from what_should_i_reflect_on?
+      retrieved_memories: #retrieve_memories response 
+      prompt: # see CREATE_REFLECTION_PROMPT
+    output:
+
+      
+
+    
+
+  retrieve_memories:
+    inputs: 
+      agent: #self
+      prompt: #PENDING
+      recency: #exponential_decay_factor: 0.99
+      relevancy: (natural_language) #generate an embedding vector of the text description of each memory. Then, we calculate relevance as the cosine similarity between the memory’s embedding vector and the query memory’s embedding vector.
+    outputs: array of retrieved memories
+  prioritize_memories: #normalize the recency, relevance, and importance scores to the range of [0, 1], then sum, then prioritize
+    input: retrieved_memories[]
+    output: prioritized_memories[]
+  determine_next_action:
+    inputs: prioritized_memories[0..10]
+    outputs: (natural_language)
+  #action_talk: (natural_language)
+  #action_move: pathing_function
+  #action_act_upon_world: 
+
+
+
+#Models/DB
+agent: #not actually persisted in DB
+  biography: (natural language string, comprised of identity, occupation, and relationships)
+  memories:
+memories: #persisted in DB
+  type: [observation, plan, reflection]
+    #observation sample description: <Agent> is <active action> [preposition i.e. on/to/with] <environment object OR agent>
+    #plan sample output description:
+    #reflection sample output description:
+  description: (natural language text)
+  importance: (see MEMORY_IMPORTANCE_PROMPT) #create on memory initialization
+  agent_id:
+  created_at:
+  last_used_at:
+world_clock: #not persisted
+  step:
+    agents_output_current_action_statement (natural language)
+
+#prompts
+MEMORY_IMPORTANCE_PROMPT= ```On the scale of 1 to 10, where 1 is purely mundane (e.g., brushing teeth, making bed) and 10 is extremely poignant (e.g., a break up, college acceptance), rate the likely poignancy of the following piece of memory.
+Memory: buying groceries at The Willows Market and Pharmacy
+Rating: <fill in>
+```
+
+WHAT_SHOULD_REFLECT_ON?_PROMPT=“Given only the information above, what are 3 most salient high-level questions we can answer about the subjects in the statements?”
+CREATE_REFLECTION_PROMPT=`What 5 high-level insights can you infer from the above statements? (example format: insight (because of 1, 5, 3))`
+
+# Environment
+environment:
+  elijahs_house:
+    bedroom:
+      bed: idle
+    kitchen:
+      stove: idle
+  matt_house:
+    bedroom:
+      bed: idle
+    kitchen:
+      stove: idle
+  avinash_house:
+    bedroom:
+      bed: idle
+    kitchen:
+      stove: idle

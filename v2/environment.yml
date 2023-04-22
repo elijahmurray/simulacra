@@ -1,0 +1,17 @@
+# Environment
+environment:
+  elijahs_house:
+    bedroom:
+      bed: idle
+    kitchen:
+      stove: idle
+  matt_house:
+    bedroom:
+      bed: idle
+    kitchen:
+      stove: idle
+  avinash_house:
+    bedroom:
+      bed: idle
+    kitchen:
+      stove: idle
