@@ -1,3 +1,5 @@
+import pdb
+import re
 from PROMPTS_CONSTANTS import (
     BIOGRAPHICAL_MEMORY_1,
     WHAT_SHOULD_I_OBSERVE_PROMPT,
@@ -32,7 +34,6 @@ class Agent:
 
         # if self.should_i_plan():
         self.create_plan()
-        self.create_plan(detail_level=2)
         # self.create_plan(detail_level=3)
 
         self.determine_next_action()
@@ -78,14 +79,18 @@ class Agent:
             + " 1) woke up at 7:00AM, 2) went to work at 8:00AM, 3) ate lunch at 12:00PM, 4) went to the gym at 5:00PM, 5) ate dinner at 6:30PM, and 6) went to sleep at 10:00PM."
         )
 
-    def create_plan(self, detail_level=1):
-        self.print_current_method("create_plan")
+    def create_plan(self, higher_level_plan="", detail_level=1):
+        self.print_current_method("create_plan(" + str(detail_level) + ")")
 
-        context = (
-            datetime_formatter(self.current_datetime)
-            + self.agent_summary()
-            + self.previous_day_summary()
-        )
+        if detail_level == 1:
+            context = (
+                datetime_formatter(self.current_datetime)
+                + self.agent_summary()
+                + self.previous_day_summary()
+            )
+
+        if detail_level == 2:
+            context = datetime_formatter(self.current_datetime) + higher_level_plan[0]
 
         response = (
             OpenAIHandler(
@@ -98,13 +103,15 @@ class Agent:
             ).response,
         )
 
-        self.store_memory(response)
-
         if VERBOSE_MODE:
             self.print_response("Plan: ")
             self.print_response(response)
 
-        return response
+        if detail_level == 2:
+            self.store_memory(response)
+            return response
+        else:
+            self.create_plan(detail_level=2, higher_level_plan=response)
 
     def should_i_plan(self):
         self.print_current_method("should_i_plan")
@@ -170,7 +177,8 @@ class Agent:
         context = self.agent_summary()
         # context = self.prioritize_memories()
         response = OpenAIHandler(
-            context=context, prompt=what_should_i_do_next_prompt(self.name)
+            context=context,
+            prompt=what_should_i_do_next_prompt(self.name, self.current_datetime),
         ).response
 
         if VERBOSE_MODE:
@@ -209,8 +217,18 @@ class Agent:
             print(f"\n{response}")
 
     def store_memory(self, memory):
+        if isinstance(memory, list):
+            for m in memory:
+                self.store_memory(m)
         if isinstance(memory, tuple):
             for m in memory:
                 self.store_memory(m)
         else:
             self.memories.append(memory)
+
+    def parse_hourly_plan(plan_response):
+        hourly_activities = re.findall(
+            r"\d\)(.*?)\d\)", plan_response + "0)", re.DOTALL
+        )
+        activities = [activity.strip() for activity in hourly_activities]
+        return activities

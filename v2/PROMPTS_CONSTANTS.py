@@ -9,11 +9,13 @@ BIOGRAPHICAL_MEMORY_1 = [
 ]
 
 
-def what_should_i_do_next_prompt(name):
+def what_should_i_do_next_prompt(name, current_datetime):
     prompt = (
-        "Based on "
+        "Given that it is "
+        + str(current_datetime)
+        + " o'clock, and based on "
         + name
-        + "'s plan for today, what should this person do next? The only text you should return is saying that they do it. Don't say what they should do. Only return your answer in the format: [person's name] does/takes [action]. i.e. it should read like: John Lin goes for a walk."
+        + "'s plan for the rest of the day, what should this person do next? The only text you should return is saying that they do it. Don't say what they should do. Only return your answer in the format: [person's name] does/takes [action]. i.e. it should read like: John Lin goes for a walk."
     )
 
     return prompt
@@ -33,5 +35,5 @@ def create_plan_prompt(current_datetime, agent_name, detail_level=1):
         + agent_name
         + "'s plan for day in "
         + detail_level_description
-        + ": 1"
+        + ", listed out as an array: 1"
     )
