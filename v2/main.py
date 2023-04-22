@@ -1,12 +1,16 @@
 from agent.agent import Agent
 from world_clock import WorldClock
 
+from prompts import (
+    biography_data_1,
+)
+
 
 def main():
     # agent = Agent(
     #     "John Lin",
     # )
-    agent = Agent("Matt Berman")
+    agent = Agent(biography_data_1)
 
     world_clock = WorldClock()
 

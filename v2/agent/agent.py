@@ -1,8 +1,6 @@
 import pdb
 import re
 from prompts import (
-    BIOGRAPHICAL_MEMORY_1,
-    BIOGRAPHICAL_MEMORY_BERMAN,
     WHAT_SHOULD_I_OBSERVE_PROMPT,
     create_plan_prompt,
     what_should_i_do_next_prompt,
@@ -15,9 +13,7 @@ from colorama import Fore, Back, Style
 from helpers import (
     datetime_formatter,
     tuple_or_array_to_string,
-    date_formatter,
     time_formatter,
-    output_formatter,
 )
 
 from .agent_utils import (
@@ -31,11 +27,11 @@ import memory as Memory
 
 
 class Agent:
-    def __init__(self, name, age=19):
-        self.name = name
+    def __init__(self, biography_data, age=19):
+        self.name = biography_data["name"]
         self.memories = []
-        # self.biography = self.create_biographical_memory(BIOGRAPHICAL_MEMORY_1)
-        self.biography = self.create_biographical_memory(BIOGRAPHICAL_MEMORY_BERMAN)
+        self.biography = self.seed_memories(biography_data["biography"])
+        # self.biography = self.seed_memories(BIOGRAPHICAL_MEMORY_BERMAN)
         self.current_datetime = None
         self.next_action = None
         self.age = age
@@ -70,9 +66,9 @@ class Agent:
 
         return summary
 
-    def create_biographical_memory(self, biography):
+    def seed_memories(self, biography):
         seed_memories = biography
-        self.memories = self.memories + seed_memories
+        self.memories.append(seed_memories)
 
     def create_observation(self):
         print_current_method(self, "create_observation")
