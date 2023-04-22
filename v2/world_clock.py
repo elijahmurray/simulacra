@@ -13,7 +13,7 @@ class WorldClock:
         return datetime.datetime.now()
 
     def advance_time(self, agents):
-        print("The time is " + self.datetime_formatter(self.current_datetime))
+        print("\nThe time is " + self.datetime_formatter(self.current_datetime))
         for agent in agents:
             agent.step_checker()
         self.current_datetime += datetime.timedelta(minutes=TIME_INCREMENT)

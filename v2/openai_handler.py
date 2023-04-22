@@ -1,6 +1,10 @@
 import openai
 import dotenv
 import os
+from colorama import Fore, Back, Style
+
+
+from APP_CONSTANTS import VERBOSE_MODE
 
 
 dotenv.load_dotenv()
@@ -13,7 +17,9 @@ class OpenAIHandler:
         self.response = self.query(prompt, context)
 
     def query(self, prompt, context=None):
-        print("Querying OpenAI...")
+        if VERBOSE_MODE:
+            print(f"{Fore.GREEN}Querying OpenAI...{Style.RESET_ALL}")
+
         messages = []
 
         for message in context:
@@ -22,7 +28,6 @@ class OpenAIHandler:
         messages.append(
             {"role": "user", "content": prompt},
         )
-        print(messages)
 
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",

@@ -11,7 +11,7 @@ def main():
 
     world_clock = WorldClock()
 
-    world_clock.advance_time(agents)
+    # Sample time advancement
     world_clock.advance_time(agents)
     world_clock.advance_time(agents)
 

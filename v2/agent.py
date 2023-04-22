@@ -2,7 +2,9 @@ from PROMPTS_CONSTANTS import (
     BIOGRAPHICAL_MEMORY_1,
     WHAT_SHOULD_I_REFLECT_ON_PROMPT,
     WHAT_SHOULD_I_OBSERVE_PROMPT,
+    WHAT_SHOULD_I_DO_NEXT_PROMPT,
 )
+from APP_CONSTANTS import VERBOSE_MODE
 from openai_handler import OpenAIHandler
 
 import memory as Memory
@@ -23,7 +25,7 @@ class Agent:
         # if self.should_i_plan():
         #     self.create_plan()
 
-        # self.determine_next_action()
+        self.determine_next_action()
 
     def create_current_action_statement(self):
         print("pending")
@@ -32,18 +34,16 @@ class Agent:
     def create_biographical_memory(self, biography):
         seed_memories = biography
         self.memories = self.memories + seed_memories
-        # openai_handler = OpenAIHandler(prompt=memories)
-        # return openai_handler
 
     def create_observation(self):
-        print("Observation")
+        self.print_current_method("create_observation")
         context = self.memories
 
         response = OpenAIHandler(
             context=context, prompt=WHAT_SHOULD_I_OBSERVE_PROMPT
         ).response
-        print(response)
-        # (natural_language)
+        self.store_memory(response)
+        self.print_response(response)
 
     def create_plan(self):
         print("pending")
@@ -53,37 +53,38 @@ class Agent:
         print("pending")
 
     def should_i_reflect(self):
-        print("pending")
-        last_100_memories = Memory.last(100)
-        number_of_reflections_in_last_100_memories = last_100_memories.where(
-            type="reflection"
-        ).count()
+        self.print_current_method("should_i_reflect")
+        # last_100_memories = Memory.last(100)
+        # number_of_reflections_in_last_100_memories = last_100_memories.where(
+        #     type="reflection"
+        # ).count()
 
-        importance_of_memories = 0
+        # importance_of_memories = 0
 
-        if number_of_reflections_in_last_100_memories > 0:
-            return False
-        else:
-            importance_of_memories = last_100_memories.each(
-                lambda memory: memory.importance
-            ).sum(lambda importance: importance)
-            if importance_of_memories > REFLECTION_THRESHOLD:
-                return True
-            else:
-                return False
+        # if number_of_reflections_in_last_100_memories > 0:
+        #     return False
+        # else:
+        #     importance_of_memories = last_100_memories.each(
+        #         lambda memory: memory.importance
+        #     ).sum(lambda importance: importance)
+        #     if importance_of_memories > REFLECTION_THRESHOLD:
+        #         return True
+        #     else:
+        #         return False
 
     def what_should_i_reflect_on(self):
-        name = self.name
-        recent_memories = Memory.where(type="reflection").last(100)  # pseudo code
-        openai_handler_instance = OpenAIHandler(
-            prompt=WHAT_SHOULD_I_REFLECT_ON + recent_memories
-        )
-        reflection_questions = openai_handler_instance.response
+        self.print_current_method("what_should_i_reflect_on")
+        # name = self.name
+        # recent_memories = Memory.where(type="reflection").last(100)  # pseudo code
+        # openai_handler_instance = OpenAIHandler(
+        #     prompt=WHAT_SHOULD_I_REFLECT_ON + recent_memories
+        # )
+        # reflection_questions = openai_handler_instance.response
 
-        return reflection_questions
+        # return self.print_response(reflection_questions)
 
     def create_reflection(self):
-        print("pending")
+        self.print_current_method("create_reflection")
         # inputs:
         # questions_to_reflect_on: # one of the questions from what_should_i_reflect_on?
         # retrieved_memories: #retrieve_memories response
@@ -91,7 +92,7 @@ class Agent:
         # output:
 
     def retrieve_memories(self):
-        print("pending")
+        self.print_current_method("retrieve_memories")
 
     # inputs:
     #   agent: #self
@@ -107,10 +108,35 @@ class Agent:
     # input: retrieved_memories[]
     # output: prioritized_memories[]
     def determine_next_action(self):
-        print("pending")
+        self.print_current_method("determine_next_action")
+        context = self.memories
+        # context = self.prioritize_memories()
+        response = OpenAIHandler(
+            context=context, prompt=WHAT_SHOULD_I_DO_NEXT_PROMPT
+        ).response
+
+        if VERBOSE_MODE:
+            self.print_response("Next Action Determined: " + response)
+
+        return response
 
     # inputs: prioritized_memories[0..10]
     # outputs: (natural_language)
     # action_talk: (natural_language)
     # action_move: pathing_function
     # action_act_upon_world:
+
+    def print_current_method(self, method):
+        if VERBOSE_MODE:
+            print(f"\n==========================\n{method}\n==========================")
+        else:
+            pass
+
+    def print_response(self, response):
+        if VERBOSE_MODE:
+            print(f"\nAPI Response - {response}")
+        else:
+            print(f"\n{response}")
+
+    def store_memory(self, memory):
+        self.memories.append(memory)
