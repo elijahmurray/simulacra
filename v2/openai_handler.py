@@ -10,7 +10,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 class OpenAIHandler:
     def __init__(self, prompt, context=None):
-        self.query(prompt, context)
+        self.response = self.query(prompt, context)
 
     def query(self, prompt, context=None):
         messages = [

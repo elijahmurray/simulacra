@@ -1,4 +1,8 @@
-from PROMPTS_CONSTANTS import BIOGRAPHICAL_MEMORY_1, WHAT_SHOULD_I_REFLECT_ON_PROMPT
+from PROMPTS_CONSTANTS import (
+    BIOGRAPHICAL_MEMORY_1,
+    WHAT_SHOULD_I_REFLECT_ON_PROMPT,
+    WHAT_SHOULD_I_OBSERVE_PROMPT,
+)
 from openai_handler import OpenAIHandler
 
 import memory as Memory
@@ -31,6 +35,9 @@ class Agent:
 
     def create_observation(self):
         print("Observation")
+
+        response = OpenAIHandler(prompt=WHAT_SHOULD_I_OBSERVE_PROMPT).response
+        print(response)
         # (natural_language)
 
     def create_plan(self):
