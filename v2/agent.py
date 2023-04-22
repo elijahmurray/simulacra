@@ -11,6 +11,7 @@ import memory as Memory
 class Agent:
     def __init__(self, name):
         self.name = name
+        self.memories = []
         self.biography = self.create_biographical_memory(BIOGRAPHICAL_MEMORY_1)
 
     def step_checker(self):
@@ -29,14 +30,18 @@ class Agent:
         # (natural_language)
 
     def create_biographical_memory(self, biography):
-        memories = biography
-        openai_handler = OpenAIHandler(prompt=memories)
-        return openai_handler
+        seed_memories = biography
+        self.memories = self.memories + seed_memories
+        # openai_handler = OpenAIHandler(prompt=memories)
+        # return openai_handler
 
     def create_observation(self):
         print("Observation")
+        context = self.memories
 
-        response = OpenAIHandler(prompt=WHAT_SHOULD_I_OBSERVE_PROMPT).response
+        response = OpenAIHandler(
+            context=context, prompt=WHAT_SHOULD_I_OBSERVE_PROMPT
+        ).response
         print(response)
         # (natural_language)
 

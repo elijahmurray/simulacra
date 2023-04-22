@@ -13,11 +13,16 @@ class OpenAIHandler:
         self.response = self.query(prompt, context)
 
     def query(self, prompt, context=None):
-        messages = [
-            {"role": "user", "content": "prompt"},
-        ]
-        if context:
-            messages.append({"role": "system", "content": context})
+        print("Querying OpenAI...")
+        messages = []
+
+        for message in context:
+            messages.append({"role": "system", "content": message})
+
+        messages.append(
+            {"role": "user", "content": prompt},
+        )
+        print(messages)
 
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
