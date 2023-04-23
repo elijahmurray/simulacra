@@ -6,7 +6,7 @@ class Memory:
   description: str
   created_at: datetime = datetime.utcnow()
   last_accessed: datetime = datetime.utcnow()
-  importance_score: int = None
+  importance_score: int = 1
 
   def update_last_accessed(self):
     self.last_accessed = datetime.utcnow()

@@ -5,6 +5,9 @@ from environment_objects import Building, Room, RoomObject
 
 class Environment:
     def __init__(self, world_file_path: str = 'init_data/world_config.json', agent_file_path: str = 'init_data/agent_config.json'):
+        """
+        Creates the environment with the buildings, rooms, objects, and agents.
+        """
         with open(world_file_path) as f:
             world_data = json.load(f)["world"]
         with open(agent_file_path) as f:
@@ -35,6 +38,52 @@ class Environment:
             # Add the agent as an occupant of the starting location, and update the locations cache
             starting_location.add_occupant(agent.name)
 
+    def to_dict(self):
+        """
+        Converts the environment state to a dictionary.
+        """
+        state = {
+            "buildings": {},
+            "agents": {}
+        }
+
+        # Add building state
+        for building_name, building in self.buildings.items():
+            state["buildings"][building_name] = {
+                "type": building.type,
+                "rooms": {}
+            }
+            for room_name, room in building.rooms.items():
+                state["buildings"][building_name]["rooms"][room_name] = {
+                    "objects": {},
+                    "occupants": room.occupants
+                }
+                for obj_name, obj in room.objects.items():
+                    state["buildings"][building_name]["rooms"][room_name]["objects"][obj_name] = {
+                        "type": obj.type,
+                        "state": obj.state
+                    }
+
+        # Add agent state
+        for agent_name, agent in self.agents.items():
+            state["agents"][agent_name] = {
+                #"memory_stream": agent.memory_stream,
+                "location": {
+                    "building": agent.location.building.name,
+                    "room": agent.location.name
+                }
+            }
+
+        return state
+
+    def save_state(self, state, file_path: str = 'server_data/state.json'):
+        """
+        Saves the environment state to a JSON file.
+        """
+        with open(file_path, 'w') as f:
+            json.dump(state, f, indent=2)
+
+    # UNSURE IF BELOW FUNCTIONS ARE NEEDED, MARK FOR REVIEW
     def get_building(self, building_name):
         return self.buildings[building_name]
 
@@ -43,5 +92,3 @@ class Environment:
 
     def get_object(self, object_name, room_name, building_name):
         return self.buildings[building_name].rooms[room_name].objects[object_name]
-
-

@@ -13,12 +13,16 @@ def main():
 
   # START SIMULATION
   sim_clock = 0
-  while True:
+  while sim_clock==0:
     for _,agent in agents.items():
       agent.observe()
       for memory in agent.memory_stream:
         print(memory.description)
-      sleep(10)
+      sleep(1)
+    state = environment.to_dict()
+    state["sim_clock"] = sim_clock
+    print(state)
+    environment.save_state(state)
     sim_clock += SIM_CLOCK_INCREMENT
 
 if __name__ == '__main__':

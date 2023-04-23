@@ -50,8 +50,3 @@ def process_building(building):
     for room in building.rooms.values():
         observations.extend(process_room(room))
     return observations
-
-def process_world():
-    observations = []
-    for building in buildings.values():
-        observations.extend(process_building(building))

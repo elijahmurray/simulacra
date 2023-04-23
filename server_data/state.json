@@ -1,0 +1,253 @@
+{
+  "buildings": {
+    "Truman's House": {
+      "type": "house",
+      "rooms": {
+        "Living Room": {
+          "objects": {
+            "Couch": {
+              "type": "seat",
+              "state": "idle"
+            },
+            "TV": {
+              "type": "device",
+              "state": "idle"
+            },
+            "Coffee Table": {
+              "type": "surface",
+              "state": "idle"
+            },
+            "Lamp": {
+              "type": "device",
+              "state": "idle"
+            }
+          },
+          "occupants": []
+        },
+        "Kitchen": {
+          "objects": {
+            "Table": {
+              "type": "surface",
+              "state": "idle"
+            },
+            "Chair": {
+              "type": "seat",
+              "state": "idle"
+            },
+            "Stove": {
+              "type": "appliance",
+              "state": "idle"
+            },
+            "Fridge": {
+              "type": "container",
+              "state": "idle"
+            }
+          },
+          "occupants": []
+        },
+        "Bedroom": {
+          "objects": {
+            "Bed": {
+              "type": "seat",
+              "state": "idle"
+            },
+            "Nightstand": {
+              "type": "surface",
+              "state": "idle"
+            },
+            "Lamp": {
+              "type": "device",
+              "state": "idle"
+            }
+          },
+          "occupants": [
+            "Truman Burbank"
+          ]
+        },
+        "Bathroom": {
+          "objects": {
+            "Toilet": {
+              "type": "seat",
+              "state": "idle"
+            },
+            "Sink": {
+              "type": "faucet",
+              "state": "idle"
+            },
+            "Shower": {
+              "type": "faucet",
+              "state": "idle"
+            }
+          },
+          "occupants": []
+        }
+      }
+    },
+    "Marlon's House": {
+      "type": "house",
+      "rooms": {
+        "Living Room": {
+          "objects": {
+            "Couch": {
+              "type": "seat",
+              "state": "idle"
+            },
+            "TV": {
+              "type": "device",
+              "state": "idle"
+            },
+            "Coffee Table": {
+              "type": "surface",
+              "state": "idle"
+            },
+            "Lamp": {
+              "type": "device",
+              "state": "idle"
+            }
+          },
+          "occupants": []
+        },
+        "Kitchen": {
+          "objects": {
+            "Table": {
+              "type": "surface",
+              "state": "idle"
+            },
+            "Chair": {
+              "type": "seat",
+              "state": "idle"
+            },
+            "Stove": {
+              "type": "appliance",
+              "state": "idle"
+            },
+            "Fridge": {
+              "type": "container",
+              "state": "idle"
+            }
+          },
+          "occupants": []
+        },
+        "Bedroom": {
+          "objects": {
+            "Bed": {
+              "type": "seat",
+              "state": "idle"
+            },
+            "Nightstand": {
+              "type": "surface",
+              "state": "idle"
+            },
+            "Lamp": {
+              "type": "device",
+              "state": "idle"
+            }
+          },
+          "occupants": [
+            "Marlon Coltrane"
+          ]
+        },
+        "Bathroom": {
+          "objects": {
+            "Toilet": {
+              "type": "seat",
+              "state": "idle"
+            },
+            "Sink": {
+              "type": "faucet",
+              "state": "idle"
+            },
+            "Shower": {
+              "type": "faucet",
+              "state": "idle"
+            }
+          },
+          "occupants": []
+        }
+      }
+    },
+    "Seahaven Life & Accident Insurance": {
+      "type": "office",
+      "rooms": {
+        "Truman's Office": {
+          "objects": {
+            "Desk": {
+              "type": "surface",
+              "state": "idle"
+            },
+            "Chair": {
+              "type": "seat",
+              "state": "idle"
+            },
+            "Computer": {
+              "type": "device",
+              "state": "idle"
+            },
+            "Lamp": {
+              "type": "device",
+              "state": "idle"
+            }
+          },
+          "occupants": []
+        },
+        "Marlon's Office": {
+          "objects": {
+            "Desk": {
+              "type": "surface",
+              "state": "idle"
+            },
+            "Chair": {
+              "type": "seat",
+              "state": "idle"
+            },
+            "Computer": {
+              "type": "device",
+              "state": "idle"
+            },
+            "Lamp": {
+              "type": "device",
+              "state": "idle"
+            }
+          },
+          "occupants": []
+        },
+        "Conference Room": {
+          "objects": {
+            "Table": {
+              "type": "surface",
+              "state": "idle"
+            },
+            "Chair": {
+              "type": "seat",
+              "state": "idle"
+            },
+            "TV": {
+              "type": "device",
+              "state": "idle"
+            },
+            "Lamp": {
+              "type": "device",
+              "state": "idle"
+            }
+          },
+          "occupants": []
+        }
+      }
+    }
+  },
+  "agents": {
+    "Truman Burbank": {
+      "location": {
+        "building": "Truman's House",
+        "room": "Bedroom"
+      }
+    },
+    "Marlon Coltrane": {
+      "location": {
+        "building": "Marlon's House",
+        "room": "Bedroom"
+      }
+    }
+  },
+  "sim_clock": 0
+}
