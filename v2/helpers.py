@@ -1,3 +1,8 @@
+from APP_CONSTANTS import VERBOSE_MODE
+from colorama import Fore, Back, Style
+import inspect
+
+
 def datetime_formatter(datetime):
     return round_time_to_nearest_5_minutes(datetime).strftime("%A, %B %d, %Y %I:%M%p")
 
@@ -34,3 +39,58 @@ def output_formatter(response):
         formatted_output = str(response)
 
     return formatted_output
+
+
+def print_current_method(self, method):
+    if VERBOSE_MODE:
+        print(
+            f"{Fore.RED}\n==========================\nCALLED: {method}\n=========================={Style.RESET_ALL}"
+        )
+    else:
+        pass
+
+
+def print_response(self, response, color=Fore.GREEN):
+    print(f"\n{response}")
+
+
+def handle_logging(message, type, force_log=False):
+    ENABLE_PROMPT_CONTEXT_LOGGING = True
+    ENABLE_PROMPT_LOGGING = True
+    ENABLE_WORLD_EVENT_LOGGING = True
+    ENABLE_METHOD_CALLED_LOGGING = True
+    ENABLE_OPENAI_RESPONSE_LOGGING = True
+
+    if force_log:
+        print(f"{Fore.RED}{message}{Style.RESET_ALL}")
+        return
+    if type == "method" and ENABLE_METHOD_CALLED_LOGGING:
+        print(
+            f"{Fore.RED}\n==========================\nCALLED: {message}\n=========================={Style.RESET_ALL}"
+        )
+        return
+    if type == "prompt" and ENABLE_PROMPT_LOGGING:
+        print(f"{Fore.MAGENTA}{message}{Style.RESET_ALL}")
+        return
+    if type == "context" and ENABLE_PROMPT_CONTEXT_LOGGING:
+        print(f"{Fore.GREEN}{message}{Style.RESET_ALL}")
+        return
+    if type == "world_event" and ENABLE_WORLD_EVENT_LOGGING:
+        print(f"{Fore.BLUE}{message}{Style.RESET_ALL}")
+        return
+    if type == "openai_response" and ENABLE_OPENAI_RESPONSE_LOGGING:
+        print(f"{Fore.WHITE}{message}{Style.RESET_ALL}")
+        return
+    else:
+        print(f"{message}")
+        return
+
+
+def calling_method_name():
+    # get the frame object of the calling function
+    frame = inspect.currentframe().f_back
+    # get the code object of the calling function
+    code = frame.f_code
+    # get the name of the calling function
+    name = code.co_name
+    return name

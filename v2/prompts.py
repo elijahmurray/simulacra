@@ -1,6 +1,7 @@
-WHAT_SHOULD_I_OBSERVE_PROMPT = (
-    "What is this person doing right now?  (example format: [person's name] is [action]"
-)
+def prompt_current_activity(datetime, name):
+    return f"It is current {datetime}. What is {name} doing right now? (example format: [person's name] is [action]"
+
+
 # MEMORY_IMPORTANCE_PROMPT = "On the scale of 1 to 10, where 1 is purely mundane (e.g., brushing teeth, making bed) and 10 is extremely poignant (e.g., a break up, college acceptance), rate the likely poignancy of the following piece of memory.\n Memory: buying groceries at The Willows Market and Pharmacy\n Rating: <fill in>"
 # WHAT_SHOULD_I_REFLECT_ON_PROMPT = "Given only the information above, what are 3 most salient high-level questions we can answer about the subjects in the statements?"
 # CREATE_REFLECTION_PROMPT = "What 5 high-level insights can you infer from the above statements? (example format: insight (because of 1, 5, 3))"
@@ -9,7 +10,7 @@ agent_seed_data_gorgio = {
     # You are helping me run a simulation. To do it, you must not break character. You must act like John, or an observer of the simulation, or I will fail my research experiment.
     "name": "Giorgio Rossi",
     "age": 41,
-    "biography": "Giorgio Rossi is a pharmacy shopkeeper at the Willow Market and Pharmacy who loves to help people. He is always looking for ways to make the process of getting medication easier for his customers; Gorgio Rossi is living with his wife, Mei Lin, who is a college professor, and son, Eddy Lin, who is a student studying music theory; Georgio Rossi loves his family very much; Georgio Rossi has known the old couple next-door, Sam Moore and Jennifer Moore, for a few years; Georgio Rossi thinks Sam Moore is a kind and nice man; Georgio Rossi knows his neighbor, Yuriko Yamamoto, well; Georgio Rossi knows of his neighbors, Tamara Taylor and Carmen Ortiz, but has not met them before; Georgio Rossi and Tom Moreno are colleagues at The Willows Market and Pharmacy; Georgio Rossi and Tom Moreno are friends and like to discuss local politics together; Georgio Rossi knows the Moreno family somewhat well — the husband Tom Moreno and the wife Jane Moreno. John is just waking up and eager to plan and start his day.",
+    "biography": "Giorgio Rossi is a pharmacy shopkeeper at the Willow Market and Pharmacy who loves to help people. He is always looking for ways to make the process of getting medication easier for his customers; Gorgio Rossi is living with his wife, Mei Lin, who is a college professor, and son, Eddy Lin, who is a student studying music theory; Georgio Rossi loves his family very much; Georgio Rossi has known the old couple next-door, Sam Moore and Jennifer Moore, for a few years; Georgio Rossi thinks Sam Moore is a kind and nice man; Georgio Rossi knows his neighbor, Yuriko Yamamoto, well; Georgio Rossi knows of his neighbors, Tamara Taylor and Carmen Ortiz, but has not met them before; Georgio Rossi and Tom Moreno are colleagues at The Willows Market and Pharmacy; Georgio Rossi and Tom Moreno are friends and like to discuss local politics together; Georgio Rossi knows the Moreno family somewhat well — the husband Tom Moreno and the wife Jane Moreno. Georgio is just waking up and eager to plan and start his day.",
     "innate_tendencies": ["analytical", "logical", "eccentric"],
     "learned_tendencies": [],
     # "currently": "Giorgio Rossi is working on a research project to explore mathematical patterns in nature. He is also taking classes to stay up to date on new mathematical theories. Giorgio is also curious about who will be running for the local mayor election next month and he talks about it a lot with others.",

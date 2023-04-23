@@ -1,7 +1,7 @@
 #Methods
 agent:
   create_current_action_statement: (natural_language)
-  create_observation: (natural_language)
+  [x]create_observation: (natural_language)
   create_plan:  (natural_language)
   should_i_reflect?:
     trigger: 

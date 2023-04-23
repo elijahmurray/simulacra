@@ -7,6 +7,10 @@ from APP_CONSTANTS import DEBUG_PROMPTS, DEBUG_CONTEXT
 
 from APP_CONSTANTS import VERBOSE_MODE
 
+from helpers import (
+    handle_logging,
+)
+
 
 dotenv.load_dotenv()
 
@@ -28,16 +32,15 @@ class OpenAIHandler:
     def chatCompletion(self, prompt, context=None):
         messages = []
 
-        if DEBUG_CONTEXT:
-            print(f"{Fore.GREEN}\n\nContext: {context}{Style.RESET_ALL}")
-        if DEBUG_PROMPTS:
-            print(f"{Fore.MAGENTA}\n\nPrompt: {prompt}{Style.RESET_ALL}")
+        handle_logging("Context: \n" + str(context), type="context")
+        handle_logging("\nPrompt: " + prompt, type="prompt")
 
-        if isinstance(context, list):
-            for message in context:
-                messages.append({"role": "system", "content": message})
-        else:
-            messages.append({"role": "system", "content": context})
+        if context is not None:
+            if isinstance(context, list):
+                for message in context:
+                    messages.append({"role": "system", "content": message})
+            else:
+                messages.append({"role": "system", "content": context})
 
         messages.append(
             {"role": "user", "content": prompt},
@@ -52,5 +55,7 @@ class OpenAIHandler:
             messages=messages,
         )
 
-        generated_response = response["choices"][0]["message"]["content"]
-        return generated_response.strip()
+        generated_response = response["choices"][0]["message"]["content"].strip()
+        handle_logging("Response: \n" + generated_response, type="openai_response")
+
+        return generated_response

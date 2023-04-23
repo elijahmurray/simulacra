@@ -1,54 +1,58 @@
 # Ripped from Matt
 
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
+
+# from sklearn.metrics.pairwise import cosine_similarity
 from openai_handler import OpenAIHandler
 import os
 from dotenv import load_dotenv
-from pinecone_manager import PineconeManager
+
+# from pinecone_manager import PineconeManager
 
 load_dotenv()
 
-pinecone_manager = PineconeManager(
-    api_key=os.getenv("PINECONE_API_KEY"),
-    index_name="memory-vectors",
-    environment=os.getenv("PINECONE_ENVIRONMENT"),
-)
+# pinecone_manager = PineconeManager(
+#     api_key=os.getenv("PINECONE_API_KEY"),
+#     index_name="memory-vectors",
+#     environment=os.getenv("PINECONE_ENVIRONMENT"),
+# )
 
 
 class MemoryObject:
     def __init__(self, description, timestamp, embedding_vector=None):
         self.description = description
-        self.creation_timestamp = timestamp
-        self.access_timestamp = timestamp
-        self.importance = self.get_importance_score(description)
-        self.embedding_vector = embedding_vector
 
-    # @staticmethod
-    def get_importance_score(prompt):
-        context = (
-            "You are a helpful memory analyst who will rate memory importance on a scale from 1 to 10.",
-        )
-        prompt = (
-            "On the scale of 1 to 10, where 1 is purely mundane (e.g., brushing teeth, making bed) and 10 is extremely poignant (e.g., a break up, college acceptance), rate the likely poignancy of the following piece of memory. Do not ask for more information, only respond with an integer score and nothing else, including no other punctuation. Memory: : {prompt} Rating: <fill in>",
-        )
 
-        message_response = OpenAIHandler.chatCompletion(
-            context=context, prompt=prompt
-        ).response
+#         self.creation_timestamp = timestamp
+#         self.access_timestamp = timestamp
+#         self.importance = self.get_importance_score(description)
+#         self.embedding_vector = embedding_vector
 
-        score = None
-        try:
-            score = float(message_response.strip())
-            score = round(score)
+#     # @staticmethod
+#     def get_importance_score(prompt):
+#         context = (
+#             "You are a helpful memory analyst who will rate memory importance on a scale from 1 to 10.",
+#         )
+#         prompt = (
+#             "On the scale of 1 to 10, where 1 is purely mundane (e.g., brushing teeth, making bed) and 10 is extremely poignant (e.g., a break up, college acceptance), rate the likely poignancy of the following piece of memory. Do not ask for more information, only respond with an integer score and nothing else, including no other punctuation. Memory: : {prompt} Rating: <fill in>",
+#         )
 
-            if score < 1 or score > 10:
-                raise ValueError(f"Invalid score value: {score}")
-        except (ValueError, KeyError, IndexError) as e:
-            print(f"Error while parsing API response: {e}")
-            score = None
+#         message_response = OpenAIHandler.chatCompletion(
+#             context=context, prompt=prompt
+#         ).response
 
-        return score
+#         score = None
+#         try:
+#             score = float(message_response.strip())
+#             score = round(score)
+
+#             if score < 1 or score > 10:
+#                 raise ValueError(f"Invalid score value: {score}")
+#         except (ValueError, KeyError, IndexError) as e:
+#             print(f"Error while parsing API response: {e}")
+#             score = None
+
+#         return score
 
 
 class MemoryStream:
@@ -61,10 +65,11 @@ class MemoryStream:
         self.alpha_relevance = 6
         self.decay_factor = 0.99
 
-    def add_memory(self, memory):
-        self.memory_stream.append(memory)
+    #     def add_memory(self, memory):
+    #         self.memory_stream.append(memory)
 
     def create_and_add_memory(self, description, timestamp):
+        return "pending"
         # Generate an embedding vector for the memory
         embedding_vector = get_embeddings([description])[0]
 
@@ -88,6 +93,7 @@ class MemoryStream:
         )  # Pass the list of dictionaries to the upsert method
 
     def retrieve_memories(self, query, current_time, top_k=1):
+        return "pending"
         # Generate an embedding vector for the query
         query_embedding = get_embeddings([query])[0]
 
@@ -152,31 +158,31 @@ def get_embeddings(texts):
     return embeddings
 
 
-# # CURRENTLY A STUB AND NOT USED
-# # from prompts import MEMORY_IMPORTANCE_PROMPT
-# # from datetime import datetime as Datetime
+# # # CURRENTLY A STUB AND NOT USED
+# # # from prompts import MEMORY_IMPORTANCE_PROMPT
+# # # from datetime import datetime as Datetime
 
-# # MEMORY_TYPES = ["observation", "plan", "reflection"]
+# # # MEMORY_TYPES = ["observation", "plan", "reflection"]
 
 
-# # class Memory:
-# #     def __init__(self, name, agent, description_prompt):
-# #         self.name = name
-# #         self.created_at = Datetime.now
-# #         self.last_retrieved_at = Datetime.now
-# #         self.agent = agent
-# #         self.importance = self.generate_importance(self)
-# #         self.description = self.description
-# #         self.type = enumerate[MEMORY_TYPES]
+# # # class Memory:
+# # #     def __init__(self, name, agent, description_prompt):
+# # #         self.name = name
+# # #         self.created_at = Datetime.now
+# # #         self.last_retrieved_at = Datetime.now
+# # #         self.agent = agent
+# # #         self.importance = self.generate_importance(self)
+# # #         self.description = self.description
+# # #         self.type = enumerate[MEMORY_TYPES]
 
-# #     def generate_description(self, prompt):
-# #         response = self.call_openai(prompt)
-# #         # observation sample description: <Agent> is <active action> [preposition i.e. on/to/with] <environment object OR agent>
-# #         # plan sample output description:
-# #         # reflection sample output description:
-# #         return response
+# # #     def generate_description(self, prompt):
+# # #         response = self.call_openai(prompt)
+# # #         # observation sample description: <Agent> is <active action> [preposition i.e. on/to/with] <environment object OR agent>
+# # #         # plan sample output description:
+# # #         # reflection sample output description:
+# # #         return response
 
-# #     def generate_importance(self):
-# #         prompt = MEMORY_IMPORTANCE_PROMPT + self.description
-# #         importance = self.call_openai(prompt)
-# #         return importance
+# # #     def generate_importance(self):
+# # #         prompt = MEMORY_IMPORTANCE_PROMPT + self.description
+# # #         importance = self.call_openai(prompt)
+# # #         return importance
