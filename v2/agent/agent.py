@@ -2,7 +2,7 @@ import pdb
 import re
 from prompts import (
     create_plan_prompt,
-    what_should_i_do_next_prompt,
+    plan_next_action_prompt,
     prompt_current_activity,
 )
 from openai_handler import OpenAIHandler
@@ -58,8 +58,8 @@ class Agent:
         #     self.create_reflection()
 
         # if self.should_i_plan():
-        self.create_daily_plan()
-        self.create_next_hour_plan()
+        self.check_daily_plan()
+        # self.create_next_hour_plan()
 
         self.determine_next_action()
         self.execute_next_action()
@@ -136,9 +136,13 @@ class Agent:
                 self.name
                 + "'s can be described as "
                 + self.current_core_characteristics()
+                + "\n"
             )
             occupation = (
-                self.name + "'s current occupation is " + self.current_occupation()
+                self.name
+                + "'s current occupation is "
+                + self.current_occupation()
+                + "\n"
             )
             # self_assessment = self.name + " feels " + self.current_self_assessment()
 
@@ -181,32 +185,35 @@ class Agent:
             ),
         )
 
-        store_memory(self, response)
+        store_memory(
+            self, f"At {datetime_formatter(self.current_datetime)}, {response}."
+        )
         handle_logging(
             datetime_formatter(self.current_datetime) + " - " + response,
             type="agent_event",
         )
         return
 
-    def create_daily_plan(self):
+    def check_daily_plan(self):
         handle_logging(calling_method_name(), type="method")
         if self.daily_plan is not None:
             return self.daily_plan
         else:
             handle_logging("create_plan(daily)", type="method")
 
-            context = (
-                datetime_formatter(self.current_datetime)
-                + self.agent_summary()
-                + previous_day_summary(self)
-            )
+            # context = (
+            #     datetime_formatter(self.current_datetime)
+            #     + self.agent_summary()
+            #     + previous_day_summary(self)
+            # )
 
             response = OpenAIHandler.chatCompletion(
                 self,
-                context=context,
+                # context=context,
                 prompt=create_plan_prompt(
                     current_datetime=datetime_formatter(self.current_datetime),
-                    agent_name=self.name,
+                    # yesterday_summary=previous_day_summary(self),
+                    agent=self,
                     detail_level="daily",
                 ),
             )
@@ -225,7 +232,7 @@ class Agent:
             context=context,
             prompt=create_plan_prompt(
                 current_datetime=datetime_formatter(self.current_datetime),
-                agent_name=self.name,
+                agent=self,
                 detail_level="hourly",
             ),
         )
@@ -296,8 +303,10 @@ class Agent:
         response = OpenAIHandler.chatCompletion(
             self,
             context=context,
-            prompt=what_should_i_do_next_prompt(
-                self.name, datetime_formatter(self.current_datetime)
+            prompt=plan_next_action_prompt(
+                self.cached_agent_summary,
+                self.name,
+                self.current_datetime,
             ),
         )
 

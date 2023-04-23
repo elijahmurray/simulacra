@@ -1,11 +1,11 @@
 from colorama import Fore, Back, Style
 
-from helpers import (
-    datetime_formatter,
-)
+
+from helpers import datetime_formatter, handle_logging
 
 
 def store_memory(self, memory):
+    handle_logging(f"Agent: {self.name} stored memory: {memory}", "agent_event")
     if isinstance(memory, list):
         for m in memory:
             store_memory(self, m)

@@ -1,6 +1,13 @@
 from colorama import Fore, Back, Style
 import inspect
 
+ENABLE_PROMPT_CONTEXT_LOGGING = True
+ENABLE_PROMPT_LOGGING = True
+ENABLE_WORLD_EVENT_LOGGING = True
+ENABLE_METHOD_CALLED_LOGGING = True
+ENABLE_OPENAI_RESPONSE_LOGGING = True
+ENABLE_AGENT_EVENT_LOGGING = True
+
 
 def datetime_formatter(datetime):
     return round_time_to_nearest_5_minutes(datetime).strftime("%A, %B %d, %Y %I:%M%p")
@@ -27,13 +34,6 @@ def time_formatter(datetime):
 
 
 def handle_logging(message, type, force_log=False):
-    ENABLE_PROMPT_CONTEXT_LOGGING = True
-    ENABLE_PROMPT_LOGGING = True
-    ENABLE_WORLD_EVENT_LOGGING = True
-    ENABLE_METHOD_CALLED_LOGGING = True
-    ENABLE_OPENAI_RESPONSE_LOGGING = True
-    ENABLE_AGENT_EVENT_LOGGING = True
-
     if force_log:
         print(f"{Fore.RED}{message}{Style.RESET_ALL}")
         return

@@ -1,3 +1,6 @@
+from helpers import datetime_formatter
+
+
 def prompt_current_activity(datetime, name):
     return f"It is current {datetime}. What is {name} doing right now? (example format: [person's name] is [action]"
 
@@ -66,32 +69,46 @@ def prompt_seed_data(seed_data):
 # ]
 
 
-def what_should_i_do_next_prompt(name, current_datetime):
+def plan_next_action_prompt(agent_summary, name, current_datetime):
     prompt = (
-        "Given that it is "
-        + str(current_datetime)
-        + " o'clock, and based on "
-        + name
-        + "'s plan, what should this person do next? The only text you should return is saying that they do it. Don't say what they should do. Only return your answer in the format: [person's name] does/takes [action]. i.e. it should read like: John Lin goes for a walk."
+        # "Given that it is "
+        # + str(current_datetime)
+        # + ", based on "
+        # + name
+        # + "'s daily plan, what is this person doing? Return your answer in the format: [person's name] is [action]."
+        f"""{agent_summary}
+        Given the above context on {name}, and that it is {datetime_formatter(current_datetime)}. 
+        What is {name} doing right now? 
+        Please always provide the response in the format: "Giorgio Rossi is [action]. If you don't know or uncertain, still provide an answer in that format."""
     )
 
     return prompt
 
 
-def create_plan_prompt(current_datetime, agent_name, detail_level="daily"):
-    if detail_level == "daily":
-        detail_level_description = "broad strokes"
-    if detail_level == "hourly":
-        detail_level_description = "medium detail, for every hour of the day"
+def create_plan_prompt(current_datetime, agent, detail_level="daily"):
+    # if detail_level == "daily":
+    #     detail_level_description = "broad strokes"
+    # if detail_level == "hourly":
+    #     detail_level_description = "medium detail, for every hour of the day"
     # if detail_level == 3:
     #     detail_level_description = "fine detail, 15 minutes by 15 minutes"
 
-    return (
-        "Today is "
-        + str(current_datetime)
-        + ". Please create a plan for "
-        + agent_name
-        + " in "
-        + detail_level_description
-        + ". List the activities in a step-by-step format, and do not mention any limitations as an AI. Here's the plan: 1"
-    )
+    return f"""Name: {agent.name} (age: {agent.age})
+        {agent.cached_agent_summary}
+        The following was {agent.name}'s schedule yesterday:
+        {agent.biography_data['daily_routine']}
+        Outline {agent.name}'s initial plan for today, in hourly increments. Use the following format:
+        8:00am - wake up
+        9:00am - eat breakfast
+        10:00am - go to work
+        """
+
+    # return (
+    #     "Today is "
+    #     + str(current_datetime)
+    #     + ". Please create a plan for "
+    #     + agent_name
+    #     + " in "
+    #     + detail_level_description
+    #     + ". List the activities in a step-by-step format, and do not mention any limitations as an AI. Here's the plan: 1"
+    # )
