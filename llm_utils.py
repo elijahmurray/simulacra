@@ -1,5 +1,5 @@
 import openai
-from config import OPENAI_MODEL
+from config import OPENAI_MODEL, MAX_TOKENS
 from dotenv import load_dotenv
 import os
 
@@ -18,6 +18,7 @@ def call_llm(prompt_template, data: dict):
         raise Exception("The data dictionary provided is missing keys required by the prompt template. Please check the prompt template and the data dictionary provided.")
     response = openai.ChatCompletion.create(
         model=OPENAI_MODEL,
+        max_tokens=MAX_TOKENS,
         messages=[
                 {"role": "user", "content": prompt}
             ]

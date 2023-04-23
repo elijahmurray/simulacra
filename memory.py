@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import List
 
 @dataclass
 class Memory:
   description: str
+  importance_score: int
+  embedding: List[float]
   created_at: datetime = datetime.utcnow()
   last_accessed: datetime = datetime.utcnow()
-  importance_score: int = 1
 
   def update_last_accessed(self):
     self.last_accessed = datetime.utcnow()

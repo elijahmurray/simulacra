@@ -2,16 +2,22 @@ from memory import Memory
 from environment_objects import Building, Room, RoomObject
 from environment_objects import process_room
 from vector_utils import store_memory_in_vectordb
+from config import IMPORTANCE_PROMPT
+from llm_utils import call_llm, get_embedding
 
 class Agent:
     def __init__(self, name: str, description: str, starting_location: Room):
         self.name = name
         self.description = description
         self.location = starting_location
-        self.memory_stream = [Memory(element) for element in self.description.split(';')]
+        # Personality and foundational background auto-set to importance score of 10
+        self.memory_stream = [Memory(element, 10, get_embedding(element)) for element in self.description.split(';')]
 
     def add_memory(self, description: str):
-        memory = Memory(description)
+        #importance_score = call_llm(IMPORTANCE_PROMPT, {'description': description})
+        importance_score = 1
+        embedding = get_embedding(description)
+        memory = Memory(description, importance_score, embedding)
         self.memory_stream.append(memory)
         store_memory_in_vectordb(self.name, memory)
 
@@ -38,6 +44,9 @@ class Agent:
         new_location.add_occupant(self.name)
 
     def converse(self, other_agent, message):
+        pass
+
+    def interact_with_object(self, object):
         pass
 
 

@@ -1,22 +1,27 @@
 # OPENAI CONFIG
 
 OPENAI_MODEL="gpt-3.5-turbo"
+MAX_TOKENS=200
 
-# PROMPTS
-
-SIM_CLOCK_INCREMENT = 10
-
-IMPORTANCE_PROMPT = '''
-On the scale of 1 to 10, where 1 is purely mundane (e.g., brushing teeth, making bed) and 10 is extremely poignant (e.g., a break up, college acceptance), rate the likely poignancy of the following piece of memory.
-Memory: {memory}
-Rating: <fill in>
-'''
+# MEMORY CONFIG
 
 RETRIEVAL_WEIGHTS = {
   'importance': 0.5,
   'relevance': 0.5,
   'recency': 0.5,
 }
+
+# SIMULATION CONFIG
+
+SIM_CLOCK_INCREMENT = 10
+
+# PROMPTS
+
+IMPORTANCE_PROMPT = '''
+On the scale of 1 to 10, where 1 is purely mundane (e.g., brushing teeth, making bed) and 10 is extremely poignant (e.g., a break up, college acceptance), rate the likely poignancy of the following piece of memory. Do not ask for more information, only respond with an integer score and nothing else, including no other punctuation.
+Memory: {description}
+Rating: <fill in>
+'''
 
 REFLECTION_SALIENT_POINTS_PROMPT = '''
 {recent_memories}
@@ -32,7 +37,7 @@ What 5 high-level insights can you infer from the above statements? (example for
 INITIAL_PLAN_PROMPT = '''
 Name: {agent_name} (age: {age})
 {agent_summary_description}
-Outline {agent_name}'s initial plan for the day, in hourly increments. Use the following format:
+Outline {agent_name}'s initial plan for the day, in hourly increments. Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following format:
 8:00am - wake up
 9:00am - eat breakfast
 10:00am - go to work
@@ -107,4 +112,3 @@ STATE_CHANGE_PROMPT = '''
 {agent_name} is currently performing the following action: {current_action} on the following object: {current_object}.
 What should we update the state of the object to? (e.g., if the object is a door, the state could be open or closed. If the object is a stove and the action is cooking, the state could be on or off.)
 '''
-

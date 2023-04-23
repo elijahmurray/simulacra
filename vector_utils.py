@@ -5,44 +5,48 @@ import uuid
 import openai
 import chromadb
 from chromadb.config import Settings
+from chromadb.utils import embedding_functions
 from dotenv import load_dotenv
 import os
 from llm_utils import get_embedding
 
 # SET UP OPENAI AND THE VECTORDB CLIENT AND COLLECTION
 load_dotenv()
-openai.api_key = os.getenv("OPEN_AI_API_KEY")
+OPEN_AI_API_KEY = os.getenv("OPEN_AI_API_KEY")
+openai.api_key = OPEN_AI_API_KEY
+
+openai_ef = embedding_functions.OpenAIEmbeddingFunction(
+  api_key=OPEN_AI_API_KEY,
+  model_name="text-embedding-ada-002"
+)
 
 client = chromadb.Client(Settings(
-    chroma_db_impl="duckdb+parquet",
-    persist_directory="vectordb"
+  chroma_db_impl="duckdb+parquet",
+  persist_directory="vectordb"
 ))
 
 try:
   #collection = client.get_collection(name='memories')
   client.delete_collection(name="memories")
-  collection = client.create_collection(name='memories')
+  collection = client.create_collection(name='memories', embedding_function=openai_ef)
 except ValueError as e:
-  collection = client.create_collection(name='memories')
-
-
-def get_memory_embedding(memory: Memory) -> List:
-    '''
-    Creates an embedding for a given text string using OpenAI's embedding API endpoint.
-    '''
-    return get_embedding(memory.description)
+  collection = client.create_collection(name='memories', embedding_function=openai_ef)
 
 def store_memory_in_vectordb(agent_name: str, memory: Memory) -> None:
-    '''
-    Stores an embedding (consisting of text plus an embedding vector) in a database, and sets metadata.
-    '''
-    embedding = get_memory_embedding(memory)
-    collection.add(
-       documents=[memory.description],
-       embeddings = [embedding],
-       metadatas=[{"agent": agent_name, "created_at": str(memory.created_at), "last_accessed": str(memory.last_accessed), "importance_score": memory.importance_score}],
-       ids=[str(uuid.uuid4())]
-    )
+  '''
+  Stores an embedding (consisting of text plus an embedding vector) in a database, and sets metadata.
+  '''
+  collection.add(
+      documents=[memory.description],
+      #embeddings = [memory.embedding],
+      metadatas=[{"agent": agent_name, "created_at": str(memory.created_at), "last_accessed": str(memory.last_accessed), "importance_score": memory.importance_score}],
+      ids=[str(uuid.uuid4())]
+  )
 
-def similiarty_search(query: str) -> List:
-    pass
+def similiarty_search(agent_name: str, query: str, n_results: int = 5) -> List:
+  #query_embeddings = get_embedding(query)
+  collection.query(
+    query_texts=[query],
+    n_results=n_results,
+    where={"agent": agent_name}
+  )
