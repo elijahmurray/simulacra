@@ -27,11 +27,11 @@ def time_formatter(datetime):
 
 
 def handle_logging(message, type, force_log=False):
-    ENABLE_PROMPT_CONTEXT_LOGGING = False
-    ENABLE_PROMPT_LOGGING = False
+    ENABLE_PROMPT_CONTEXT_LOGGING = True
+    ENABLE_PROMPT_LOGGING = True
     ENABLE_WORLD_EVENT_LOGGING = True
     ENABLE_METHOD_CALLED_LOGGING = True
-    ENABLE_OPENAI_RESPONSE_LOGGING = False
+    ENABLE_OPENAI_RESPONSE_LOGGING = True
     ENABLE_AGENT_EVENT_LOGGING = True
 
     if force_log:
@@ -46,7 +46,7 @@ def handle_logging(message, type, force_log=False):
         print(f"{Fore.MAGENTA}{message}{Style.RESET_ALL}")
         return
     if type == "context" and ENABLE_PROMPT_CONTEXT_LOGGING:
-        print(f"{Fore.MAGENTA}{message}{Style.RESET_ALL}")
+        print(f"{Fore.RED}{message}{Style.RESET_ALL}")
         return
     if type == "agent_event" and ENABLE_AGENT_EVENT_LOGGING:
         print(f"{Fore.WHITE}{message}{Style.RESET_ALL}")

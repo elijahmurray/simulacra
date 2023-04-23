@@ -115,6 +115,7 @@ class Agent:
             return self_assessment
 
     def agent_summary(self):
+        handle_logging(calling_method_name(), type="method")
         if self.cached_agent_summary is not None:
             return self.cached_agent_summary
         else:
@@ -158,6 +159,7 @@ class Agent:
             return agent_summary
 
     def seed_memories(self, seed_data):
+        handle_logging(calling_method_name(), type="method")
         self.memories.extend(
             [phrase.strip() for phrase in seed_data["biography"].split(";")]
         )
@@ -187,6 +189,7 @@ class Agent:
         return
 
     def create_daily_plan(self):
+        handle_logging(calling_method_name(), type="method")
         if self.daily_plan is not None:
             return self.daily_plan
         else:
@@ -211,6 +214,7 @@ class Agent:
             self.daily_plan = response
 
     def create_next_hour_plan(self):
+        handle_logging(calling_method_name(), type="method")
         context = (
             self.agent_summary()
             + self.daily_plan
@@ -287,12 +291,14 @@ class Agent:
     # output: prioritized_memories[]
     def determine_next_action(self):
         handle_logging(calling_method_name(), type="method")
-        context = self.agent_summary()
+        context = self.agent_summary() + self.daily_plan
         # context = self.prioritize_memories()
         response = OpenAIHandler.chatCompletion(
             self,
             context=context,
-            prompt=what_should_i_do_next_prompt(self.name, self.current_datetime),
+            prompt=what_should_i_do_next_prompt(
+                self.name, datetime_formatter(self.current_datetime)
+            ),
         )
 
         self.next_action = response
