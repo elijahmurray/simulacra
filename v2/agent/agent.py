@@ -4,7 +4,9 @@ from prompts import (
     create_plan_prompt,
     plan_next_action_prompt,
     prompt_current_activity,
-    quick_start_data,
+)
+from seed_data import (
+    quick_start_data_gorgio,
 )
 from openai_handler import OpenAIHandler
 
@@ -21,11 +23,9 @@ from .agent_utils import previous_day_summary, store_memory
 
 from memory import MemoryObject, MemoryStream
 
-QUICK_START = True
-
 
 class Agent:
-    def __init__(self, biography_data):
+    def __init__(self, biography_data, quick_start_data=None):
         self.memories = []
         self.memory_stream = MemoryStream()
         self.name = biography_data["name"]
@@ -40,10 +40,12 @@ class Agent:
         self.cached_agent_summary = None
         self.daily_plan = None
         self.next_hour_plan = None
-        if QUICK_START:
-            self.daily_plan = quick_start_data["quick_start_daily_plan"]
-            self.cached_daily_occupation = quick_start_data["quick_start_occupation"]
-            self.cached_core_characteristics = quick_start_data[
+        if quick_start_data is not None:
+            self.daily_plan = quick_start_data_gorgio["quick_start_daily_plan"]
+            self.cached_daily_occupation = quick_start_data_gorgio[
+                "quick_start_occupation"
+            ]
+            self.cached_core_characteristics = quick_start_data_gorgio[
                 "quick_start_core_characteristics"
             ]
 

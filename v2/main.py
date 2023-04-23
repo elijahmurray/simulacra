@@ -1,8 +1,11 @@
 from agent.agent import Agent
 from world_clock import WorldClock
 
-from prompts import (
+from seed_data import (
     agent_seed_data_gorgio,
+    quick_start_data_gorgio,
+    agent_seed_data_student,
+    quick_start_data_student,
 )
 
 
@@ -10,7 +13,7 @@ def main():
     # agent = Agent(
     #     "John Lin",
     # )
-    agent = Agent(agent_seed_data_gorgio)
+    agent = Agent(agent_seed_data_student, quick_start_data_student)
 
     world_clock = WorldClock()
 
