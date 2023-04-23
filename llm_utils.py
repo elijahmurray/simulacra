@@ -12,7 +12,10 @@ def call_llm(prompt_template, data: dict):
     Calls the LLM with a prompt and returns the response text.
     Requires that the data dictionary provided has keys that match the prompt's template variables, or error will be thrown.
     '''
-    prompt = prompt_template.format(**data)
+    try:
+        prompt = prompt_template.format(**data)
+    except KeyError as e:
+        raise Exception("The data dictionary provided is missing keys required by the prompt template. Please check the prompt template and the data dictionary provided.")
     response = openai.ChatCompletion.create(
         model=OPENAI_MODEL,
         messages=[
