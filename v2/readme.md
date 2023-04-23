@@ -29,21 +29,4 @@ Edit the `.env` file to put in your OpenAI private key
 To run: `cd v2 && python main.py` or `python v2/main.py`
 
 # Debugging
-To have more robust debugging, you can turn on logging in the `APP_CONSTANTS.py`
-
-For context debugging, set:
-`DEBUG_CONTEXT = True`
-
-For context+prompt debugging, set:
-```
-DEBUG_PROMPTS = True
-DEBUG_CONTEXT = True
-```
-
-
-For verbose debugging, set:
-```
-DEBUG_PROMPTS = True
-DEBUG_CONTEXT = True
-VERBOSE_MODE = True
-```
+To have more robust debugging, you can turn on various levels of logging using the variables found in the `handle_logging` method.

@@ -2,10 +2,7 @@ import openai
 import dotenv
 import os
 from colorama import Fore, Back, Style
-from APP_CONSTANTS import DEBUG_PROMPTS, DEBUG_CONTEXT
 
-
-from APP_CONSTANTS import VERBOSE_MODE
 
 from helpers import (
     handle_logging,
@@ -46,8 +43,7 @@ class OpenAIHandler:
             {"role": "user", "content": prompt},
         )
 
-        if DEBUG_PROMPTS or DEBUG_CONTEXT or VERBOSE_MODE:
-            print(f"{Fore.GREEN}Querying OpenAI...{Style.RESET_ALL}")
+        handle_logging("Querying OpenAI...", type="method")
 
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",

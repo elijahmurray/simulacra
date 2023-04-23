@@ -1,7 +1,8 @@
 import datetime
 import agent as Agent
 from helpers import datetime_formatter
-from APP_CONSTANTS import DEBUG_CONTEXT
+
+from helpers import handle_logging
 
 
 TIME_INCREMENT = 60  # in_minutes
@@ -19,8 +20,8 @@ class WorldClock:
 
     def advance_time(self, agents):
         pretty_date_time = datetime_formatter(self.current_datetime)
-        if DEBUG_CONTEXT:
-            print("\n> World Clock: " + pretty_date_time)
+        handle_logging(f"> World Clock: {pretty_date_time}", "world_event")
+
         for agent in agents:
             agent.advance_step(self.current_datetime)
         self.current_datetime += datetime.timedelta(minutes=TIME_INCREMENT)

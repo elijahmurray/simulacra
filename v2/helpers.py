@@ -1,4 +1,3 @@
-from APP_CONSTANTS import VERBOSE_MODE
 from colorama import Fore, Back, Style
 import inspect
 
@@ -27,33 +26,6 @@ def time_formatter(datetime):
     return datetime.strftime("%I:%M%p")
 
 
-def output_formatter(response):
-    formatted_output = ""
-
-    if isinstance(response, tuple) or isinstance(response, list):
-        for r in response:
-            formatted_output += "\n" + r
-    elif isinstance(response, str):
-        formatted_output = response
-    else:
-        formatted_output = str(response)
-
-    return formatted_output
-
-
-def print_current_method(self, method):
-    if VERBOSE_MODE:
-        print(
-            f"{Fore.RED}\n==========================\nCALLED: {method}\n=========================={Style.RESET_ALL}"
-        )
-    else:
-        pass
-
-
-def print_response(self, response, color=Fore.GREEN):
-    print(f"\n{response}")
-
-
 def handle_logging(message, type, force_log=False):
     ENABLE_PROMPT_CONTEXT_LOGGING = True
     ENABLE_PROMPT_LOGGING = True
@@ -74,6 +46,9 @@ def handle_logging(message, type, force_log=False):
         return
     if type == "context" and ENABLE_PROMPT_CONTEXT_LOGGING:
         print(f"{Fore.GREEN}{message}{Style.RESET_ALL}")
+        return
+    if type == "agent_event" and ENABLE_WORLD_EVENT_LOGGING:
+        print(f"{Fore.BLUE}{message}{Style.RESET_ALL}")
         return
     if type == "world_event" and ENABLE_WORLD_EVENT_LOGGING:
         print(f"{Fore.BLUE}{message}{Style.RESET_ALL}")

@@ -5,7 +5,6 @@ from prompts import (
     what_should_i_do_next_prompt,
     prompt_current_activity,
 )
-from APP_CONSTANTS import VERBOSE_MODE
 from openai_handler import OpenAIHandler
 
 from colorama import Fore, Back, Style
@@ -13,9 +12,6 @@ from colorama import Fore, Back, Style
 from helpers import (
     datetime_formatter,
     tuple_or_array_to_string,
-    time_formatter,
-    print_current_method,
-    print_response,
     handle_logging,
     calling_method_name,
 )
@@ -176,11 +172,11 @@ class Agent:
         )
 
         store_memory(self, response)
-        print_response(
-            self,
-            "At " + time_formatter(self.current_datetime) + ", " + response,
-            color=Fore.WHITE,
+        handle_logging(
+            datetime_formatter(self.current_datetime) + " - " + response,
+            type="agent_event",
         )
+        return
 
     def create_plan(self, higher_level_plan="", detail_level=1):
         handle_logging("create_plan(detail: " + str(detail_level) + ")", type="method")
@@ -207,9 +203,6 @@ class Agent:
         )
 
         handle_logging(response, type="openai_response")
-
-        # TODO: Make this work
-        # output_formatter(response)
 
         if detail_level == 2:
             store_memory(self, response)
@@ -248,8 +241,6 @@ class Agent:
         #     prompt=WHAT_SHOULD_I_REFLECT_ON + recent_memories
         # )
         # reflection_questions = openai_handler_instance.response
-
-        # return print_response(self, reflection_questions)
 
     def create_reflection(self):
         handle_logging(calling_method_name(), type="method")

@@ -1,4 +1,3 @@
-from APP_CONSTANTS import VERBOSE_MODE
 from colorama import Fore, Back, Style
 
 from helpers import (
