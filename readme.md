@@ -1,10 +1,8 @@
-# Agent Simulation
+# Agent Simulator
 
-This project simulates a basic interaction between two agents, Alice and Bob, using the OpenAI API. The agents can have conversations, perform tasks, and form relationships. The simulation uses a scheduler to keep track of time and manage the agents' actions.
+This project is inpired by the [Generative Agents: Interactive Simulacra of Human Behavior](https://arxiv.org/abs/2304.03442) paper from Stanford and Google. The goal is to recreate interaction between GPT powered agents, that can freely plan their days, interact, and reflect based on their interactions with the world and their memories.
 
-Inspired by the Stanford x Google experiment in generative agent human simulating interactions.
-
-Very much a WIP currently. See roadmap below.
+Current status: Based on seed data, an agent can currently plan and execute their day based on their simplified memories and daily plan. Please see the [stable branch](https://github.com/elijahmurray/simulacra/tree/stable) if you're interested in experimenting.
 
 ## Setup
 
