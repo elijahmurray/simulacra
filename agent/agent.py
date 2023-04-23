@@ -1,4 +1,5 @@
 import pdb
+import json
 import re
 from prompts import (
     create_plan_prompt,
@@ -321,3 +322,8 @@ class Agent:
     # action_talk: (natural_language)
     # action_move: pathing_function
     # action_act_upon_world:
+
+    def to_dict(self):
+        return {
+            "current_datetime": self.current_datetime.isoformat(),
+        }
