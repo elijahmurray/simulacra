@@ -6,7 +6,6 @@ from typing import List
 class Memory:
   description: str
   importance_score: int
-  embedding: List[float]
   created_at: datetime = datetime.utcnow()
   last_accessed: datetime = datetime.utcnow()
 
