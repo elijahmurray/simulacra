@@ -22,5 +22,5 @@ class WorldClock:
         if DEBUG_CONTEXT:
             print("\n> World Clock: " + pretty_date_time)
         for agent in agents:
-            agent.step_checker(self.current_datetime)
+            agent.advance_step(self.current_datetime)
         self.current_datetime += datetime.timedelta(minutes=TIME_INCREMENT)

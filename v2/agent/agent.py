@@ -30,13 +30,12 @@ class Agent:
     def __init__(self, biography_data, age=19):
         self.name = biography_data["name"]
         self.memories = []
-        self.biography = self.seed_memories(biography_data["biography"])
-        # self.biography = self.seed_memories(BIOGRAPHICAL_MEMORY_BERMAN)
         self.current_datetime = None
         self.next_action = None
         self.age = age
+        self.seed_memories(biography_data)
 
-    def step_checker(self, current_datetime):
+    def advance_step(self, current_datetime):
         self.current_datetime = current_datetime
         self.create_observation()
 
@@ -66,9 +65,8 @@ class Agent:
 
         return summary
 
-    def seed_memories(self, biography):
-        seed_memories = biography
-        self.memories.append(seed_memories)
+    def seed_memories(self, seed_data):
+        self.memories.append(seed_data["biography"])
 
     def create_observation(self):
         print_current_method(self, "create_observation")
