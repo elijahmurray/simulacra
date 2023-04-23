@@ -4,6 +4,7 @@ from prompts import (
     create_plan_prompt,
     plan_next_action_prompt,
     prompt_current_activity,
+    quick_start_data,
 )
 from openai_handler import OpenAIHandler
 
@@ -38,9 +39,11 @@ class Agent:
         self.seed_memories(biography_data)
         self.cached_agent_summary = None
         self.daily_plan = None
+        self.next_hour_plan = None
         if QUICK_START:
-            self.cached_daily_occupation = biography_data["quick_start_occupation"]
-            self.cached_core_characteristics = biography_data[
+            self.daily_plan = quick_start_data["quick_start_daily_plan"]
+            self.cached_daily_occupation = quick_start_data["quick_start_occupation"]
+            self.cached_core_characteristics = quick_start_data[
                 "quick_start_core_characteristics"
             ]
 
@@ -59,14 +62,10 @@ class Agent:
 
         # if self.should_i_plan():
         self.check_daily_plan()
-        # self.create_next_hour_plan()
+        self.update_next_hour_plan()
 
         self.determine_next_action()
         self.execute_next_action()
-
-    def current_action_statement(self):
-        handle_logging(calling_method_name(), type="method")
-        # (natural_language)
 
     def current_core_characteristics(self):
         handle_logging(calling_method_name(), type="method")
@@ -220,22 +219,19 @@ class Agent:
 
             self.daily_plan = response
 
-    def create_next_hour_plan(self):
+    def update_next_hour_plan(self):
         handle_logging(calling_method_name(), type="method")
-        context = (
-            self.agent_summary()
-            + self.daily_plan
-            + string_from_array(self.memories[-10:])
-        )
+
         response = OpenAIHandler.chatCompletion(
             self,
-            context=context,
             prompt=create_plan_prompt(
-                current_datetime=datetime_formatter(self.current_datetime),
+                current_datetime=self.current_datetime,
                 agent=self,
                 detail_level="hourly",
             ),
         )
+
+        self.next_hour_plan = response
 
         return response
 
@@ -298,15 +294,13 @@ class Agent:
     # output: prioritized_memories[]
     def determine_next_action(self):
         handle_logging(calling_method_name(), type="method")
-        context = self.agent_summary() + self.daily_plan
         # context = self.prioritize_memories()
         response = OpenAIHandler.chatCompletion(
             self,
-            context=context,
             prompt=plan_next_action_prompt(
                 self.cached_agent_summary,
-                self.name,
-                self.current_datetime,
+                agent=self,
+                current_datetime=self.current_datetime,
             ),
         )
 

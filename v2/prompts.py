@@ -29,6 +29,25 @@ agent_seed_data_gorgio = {
         "7. have dinner with family at 6:00 pm",
         "8. watch some TV from 7 to 8 pm",
     ],
+}
+
+quick_start_data = {
+    "quick_start_daily_plan": """
+        7:00am - wake up and complete morning routine
+        8:00am - eat breakfast with family
+        9:00am - arrive at work and open pharmacy
+        10:00am - assist customers with medication needs
+        11:00am - order and stock inventory
+        12:00pm - take a break for lunch
+        1:00pm - continue assisting customers and managing pharmacy operations
+        2:00pm - attend a meeting with local business owners to discuss community events
+        3:00pm - return to work and continue managing pharmacy operations
+        4:00pm - take a break to read up on the news
+        5:00pm - assist any remaining customers and close pharmacy for the day
+        6:00pm - have dinner with family
+        7:00pm - spend time with family
+        8:00pm - wind down and prepare for bed.
+    """,
     "quick_start_core_characteristics": """Based on the information provided, Giorgio Rossi's core characteristics appear to be:
         1. Helpful: Giorgio Rossi is always looking for ways to make the process of getting medication easier for his customers.
 
@@ -69,16 +88,17 @@ def prompt_seed_data(seed_data):
 # ]
 
 
-def plan_next_action_prompt(agent_summary, name, current_datetime):
+def plan_next_action_prompt(agent_summary, agent, current_datetime):
     prompt = (
         # "Given that it is "
         # + str(current_datetime)
         # + ", based on "
         # + name
         # + "'s daily plan, what is this person doing? Return your answer in the format: [person's name] is [action]."
-        f"""{agent_summary}
-        Given the above context on {name}, and that it is {datetime_formatter(current_datetime)}. 
-        What is {name} doing right now? 
+        f"""{agent_summary}.
+        {agent.name}'s plan for the day was: \n{agent.daily_plan} \n and the plan for the next hour was to \n{agent.next_hour_plan}.
+        \nGiven the above context on {agent.name}, and that it is {datetime_formatter(current_datetime)}. 
+        What is {agent.name} doing right now? 
         Please always provide the response in the format: "Giorgio Rossi is [action]. If you don't know or uncertain, still provide an answer in that format."""
     )
 
@@ -86,22 +106,28 @@ def plan_next_action_prompt(agent_summary, name, current_datetime):
 
 
 def create_plan_prompt(current_datetime, agent, detail_level="daily"):
-    # if detail_level == "daily":
-    #     detail_level_description = "broad strokes"
-    # if detail_level == "hourly":
-    #     detail_level_description = "medium detail, for every hour of the day"
-    # if detail_level == 3:
-    #     detail_level_description = "fine detail, 15 minutes by 15 minutes"
-
-    return f"""Name: {agent.name} (age: {agent.age})
-        {agent.cached_agent_summary}
-        The following was {agent.name}'s schedule yesterday:
-        {agent.biography_data['daily_routine']}
-        Outline {agent.name}'s initial plan for today, in hourly increments. Use the following format:
-        8:00am - wake up
-        9:00am - eat breakfast
-        10:00am - go to work
-        """
+    if detail_level == "daily":
+        return f"""Name: {agent.name} (age: {agent.age})
+            {agent.cached_agent_summary}
+            The following was {agent.name}'s schedule yesterday:
+            {agent.biography_data['daily_routine']}
+            Outline {agent.name}'s initial plan for today, in hourly increments. Use the following format:
+            8:00am - wake up
+            9:00am - eat breakfast
+            10:00am - go to work
+            """
+    if "hourly" in detail_level:
+        return f"""Name: {agent.name} (age: {agent.age})
+            {agent.cached_agent_summary}
+            The following was {agent.name}'s plan for the day:
+            {agent.daily_plan}
+            Based on the daily plan, break down {agent.name}'s daily plan but only for the next 60 minutes starting at {agent.current_datetime }, into four, 15 minute increments. Use the following format:
+            8:15am - wake up
+            8:30am - brush teeth/shower
+            8:45am - brush teeth/shower
+            9:15am - have breakfast
+            9:30am - walk to work
+            """
 
     # return (
     #     "Today is "

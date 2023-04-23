@@ -25,6 +25,16 @@ def main():
     world_clock.advance_time(agents)
     world_clock.advance_time(agents)
     world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
+    world_clock.advance_time(agents)
 
 
 if __name__ == "__main__":
