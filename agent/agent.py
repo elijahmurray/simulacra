@@ -324,6 +324,19 @@ class Agent:
     # action_act_upon_world:
 
     def to_dict(self):
+        # "memory_stream": self.memory_stream.to_dict(),
         return {
+            "memories": self.memories,
+            "name": self.name,
+            "innate_tendencies": self.innate_tendencies,
+            "learned_tendencies": self.learned_tendencies,
             "current_datetime": self.current_datetime.isoformat(),
+            "next_action": self.next_action,
+            "age": self.age,
+            "occupational_statement": self.occupational_statement,
+            "biography_data": self.biography_data,
+            "daily_plan": self.daily_plan,
+            "next_hour_plan": self.next_hour_plan,
+            "cached_daily_occupation": self.cached_daily_occupation,
+            "cached_core_characteristics": self.cached_core_characteristics,
         }
