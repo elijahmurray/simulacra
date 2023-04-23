@@ -37,7 +37,7 @@ def store_memory_in_vectordb(agent_name: str, memory: Memory) -> None:
   '''
   collection.add(
       documents=[memory.description],
-      metadatas=[{"agent": agent_name, "created_at": str(memory.created_at), "last_accessed": str(memory.last_accessed), "importance_score": memory.importance_score}],
+      metadatas=[{"agent": agent_name, "type": memory.type, "created_at": str(memory.created_at), "last_accessed": str(memory.last_accessed), "importance_score": memory.importance_score}],
       ids=[str(uuid.uuid4())]
   )
 

@@ -6,6 +6,7 @@ from typing import List
 class Memory:
   description: str
   importance_score: int
+  type: str = "observation"
   created_at: datetime = datetime.utcnow()
   last_accessed: datetime = datetime.utcnow()
 

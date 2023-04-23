@@ -32,6 +32,7 @@ class Environment:
             # Create the agent
             agent = Agent(
                 name = agent_json["name"],
+                age = agent_json["age"],
                 description=agent_json["description"],
                 starting_location=starting_location)
             self.agents[agent.name] = agent

@@ -16,8 +16,6 @@ def main():
   while sim_clock==0:
     for _,agent in agents.items():
       agent.observe()
-      for memory in agent.memory_stream:
-        print(memory.description)
       sleep(1)
     state = environment.to_dict()
     state["sim_clock"] = sim_clock

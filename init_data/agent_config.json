@@ -2,12 +2,14 @@
   "agents": [
     {
       "name": "Truman Burbank",
+      "age": 35,
       "description": "Truman Burbank is an insurance salesman at Seahaven Accident & Life Insurance; He is known for his friendly and approachable demeanor, which helps him connect with clients; Truman lives alone in a beautiful house in Seahaven, which he has decorated with souvenirs from his travels; He is passionate about sailing and dreams of someday taking an extended sailing trip to explore the world; Truman enjoys spending time walking along the beach and watching the sunset; Truman is an avid reader and has an extensive collection of books on various subjects; Truman is an active member of the local community and spends time maintaining the town's public spaces, such as the park and the library; Truman loves collecting vintage postcards and has a vast collection from all around the world; Truman is always looking for ways to improve his skills, and he takes various online courses to stay up-to-date with the latest trends in the insurance industry; Truman's best friend is Marlon Coltrane, and they have been working together at the insurance company for over a decade.",
       "starting_location":
         {"building_name": "Truman's House", "room_name": "Bedroom"}
     },
     {
       "name": "Marlon Coltrane",
+      "age": 37,
       "description": "Marlon Coltrane is an insurance agent at Seahaven Accident & Life Insurance, where he works closely with his best friend, Truman Burbank; Marlon is known for his excellent problem-solving skills and his ability to reassure worried clients; Marlon lives alone in a cozy house in Seahaven, which is filled with paintings he has created himself; Marlon is a talented painter and often spends his weekends working on new pieces; He is also passionate about music and enjoys playing the guitar in his free time; Marlon is a fitness enthusiast and can often be found jogging or practicing yoga by the beach; He is deeply interested in history and often visits the small town museum to learn more about Seahaven's past; Marlon loves to cook and experiment with new recipes, often sharing his culinary creations with Truman; Marlon is always eager to learn and frequently attends workshops and seminars to improve his professional skills; He values his friendship with Truman and appreciates their shared experiences in the town of Seahaven.",
       "starting_location":
         {"building_name": "Marlon's House", "room_name": "Bedroom"}
