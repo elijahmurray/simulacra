@@ -51,11 +51,11 @@ class Agent:
         #     self.create_reflection()
 
         # if self.should_i_plan():
-        self.create_plan()
+        # self.create_plan()
         # self.create_plan(detail_level=3)
 
-        self.determine_next_action()
-        self.execute_next_action()
+        # self.determine_next_action()
+        # self.execute_next_action()
 
     def current_action_statement(self):
         handle_logging(calling_method_name(), type="method")
@@ -167,7 +167,6 @@ class Agent:
         handle_logging(calling_method_name(), type="method")
         context = self.agent_summary()
 
-        # pdb.set_trace()
         response = OpenAIHandler.chatCompletion(
             self,
             context=context,
