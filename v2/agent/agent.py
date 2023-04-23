@@ -5,9 +5,6 @@ from prompts import (
     plan_next_action_prompt,
     prompt_current_activity,
 )
-from seed_data import (
-    quick_start_data_gorgio,
-)
 from openai_handler import OpenAIHandler
 
 from colorama import Fore, Back, Style
@@ -41,11 +38,9 @@ class Agent:
         self.daily_plan = None
         self.next_hour_plan = None
         if quick_start_data is not None:
-            self.daily_plan = quick_start_data_gorgio["quick_start_daily_plan"]
-            self.cached_daily_occupation = quick_start_data_gorgio[
-                "quick_start_occupation"
-            ]
-            self.cached_core_characteristics = quick_start_data_gorgio[
+            self.daily_plan = quick_start_data["quick_start_daily_plan"]
+            self.cached_daily_occupation = quick_start_data["quick_start_occupation"]
+            self.cached_core_characteristics = quick_start_data[
                 "quick_start_core_characteristics"
             ]
 
@@ -57,7 +52,12 @@ class Agent:
 
     def advance_step(self, current_datetime):
         self.current_datetime = current_datetime
-        self.create_observation()
+
+        # Make sure there's a plan for the day and next hour
+        # if self.daily_plan is None:
+        #     self.create_daily_plan()
+        #     self.update_next_hour_plan()
+        #     self.execute_next_action()
 
         # if self.should_i_reflect():
         #     self.create_reflection()
@@ -68,6 +68,7 @@ class Agent:
 
         self.determine_next_action()
         self.execute_next_action()
+        self.create_observation()
 
     def current_core_characteristics(self):
         handle_logging(calling_method_name(), type="method")
@@ -182,7 +183,8 @@ class Agent:
             self,
             context=context,
             prompt=prompt_current_activity(
-                datetime_formatter(self.current_datetime), self.name
+                agent=self,
+                current_datetime=self.current_datetime,
             ),
         )
 

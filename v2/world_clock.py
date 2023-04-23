@@ -5,7 +5,7 @@ from helpers import datetime_formatter
 from helpers import handle_logging
 
 
-TIME_INCREMENT = 30  # in_minutes
+TIME_INCREMENT = 5  # in_minutes
 time_offset = datetime.timedelta(hours=+14)
 START_TIME = datetime.datetime.now() + time_offset
 

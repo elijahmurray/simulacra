@@ -1,8 +1,9 @@
 from helpers import datetime_formatter
 
 
-def prompt_current_activity(datetime, name):
-    return f"It is current {datetime}. What is {name} doing right now? (example format: [person's name] is [action]"
+def prompt_current_activity(agent, current_datetime):
+    # return f"It is currently {datetime}. What is {name} doing right now? (example format: [person's name] is [action]"
+    return f"""provide a definitive statement with no explanation for what {agent.name} is doing right now at {datetime_formatter(current_datetime)} in the format: "{agent.name} is [action]."""
 
 
 # MEMORY_IMPORTANCE_PROMPT = "On the scale of 1 to 10, where 1 is purely mundane (e.g., brushing teeth, making bed) and 10 is extremely poignant (e.g., a break up, college acceptance), rate the likely poignancy of the following piece of memory.\n Memory: buying groceries at The Willows Market and Pharmacy\n Rating: <fill in>"
@@ -13,9 +14,9 @@ def prompt_current_activity(datetime, name):
 def plan_next_action_prompt(agent_summary, agent, current_datetime):
     prompt = f"""{agent_summary}.
         {agent.name}'s plan for the day was: \n{agent.daily_plan} \n and the plan for the next hour was to \n{agent.next_hour_plan}.
-        \nGiven the above context on {agent.name}, and that it is {datetime_formatter(current_datetime)}. 
-        What is {agent.name} doing right now? 
-        Please always provide the response in the format: "Giorgio Rossi is [action]. If you don't know or uncertain, still provide an answer in that format."""
+        \nGiven the above context on {agent.name},
+        provide a definitive statement with no explanation for what {agent.name} 
+        is doing right now at {datetime_formatter(current_datetime)} in the format: "{agent.name} is [action]."""
 
     return prompt
 

@@ -54,4 +54,14 @@ class OpenAIHandler:
         generated_response = response["choices"][0]["message"]["content"].strip()
         handle_logging("Response: \n" + generated_response, type="openai_response")
 
+        if "As an AI language model" in generated_response:
+            handle_logging(
+                "Response: \n" + generated_response,
+                type="openai_response",
+                force_log=True,
+            )
+            raise ValueError(
+                "The response contains an invalid text: 'As an AI language model'"
+            )
+
         return generated_response
