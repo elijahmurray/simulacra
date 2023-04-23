@@ -13,7 +13,8 @@
               {"name": "TV", "type": "device", "state": "idle"},
               {"name": "Coffee Table", "type": "surface", "state": "idle"},
               {"name": "Lamp", "type": "device", "state": "idle"}
-            ]
+            ],
+            "occupants": []
           },
           {
             "name": "Kitchen",
@@ -22,14 +23,16 @@
               {"name": "Chair", "type": "seat", "state": "idle"},
               {"name": "Stove", "type": "appliance", "state": "idle"},
               {"name": "Fridge", "type": "container", "state": "idle"}
-            ]
+            ],
+            "occupants": []
           },
           {"name": "Bedroom",
             "objects": [
               {"name": "Bed", "type": "seat", "state": "idle"},
               {"name": "Nightstand", "type": "surface", "state": "idle"},
               {"name": "Lamp", "type": "device", "state": "idle"}
-            ]
+            ],
+            "occupants": []
           },
           {
             "name": "Bathroom",
@@ -37,7 +40,8 @@
               {"name": "Toilet", "type": "seat", "state": "idle"},
               {"name": "Sink", "type": "faucet", "state": "idle"},
               {"name": "Shower", "type": "faucet", "state": "idle"}
-            ]
+            ],
+            "occupants": []
           }
         ]
       },
@@ -52,7 +56,8 @@
               {"name": "TV", "type": "device", "state": "idle"},
               {"name": "Coffee Table", "type": "surface", "state": "idle"},
               {"name": "Lamp", "type": "device", "state": "idle"}
-            ]
+            ],
+            "occupants": []
           },
           {
             "name": "Kitchen",
@@ -61,14 +66,16 @@
               {"name": "Chair", "type": "seat", "state": "idle"},
               {"name": "Stove", "type": "appliance", "state": "idle"},
               {"name": "Fridge", "type": "container", "state": "idle"}
-            ]
+            ],
+            "occupants": []
           },
           {"name": "Bedroom",
             "objects": [
               {"name": "Bed", "type": "seat", "state": "idle"},
               {"name": "Nightstand", "type": "surface", "state": "idle"},
               {"name": "Lamp", "type": "device", "state": "idle"}
-            ]
+            ],
+            "occupants": []
           },
           {
             "name": "Bathroom",
@@ -76,7 +83,8 @@
               {"name": "Toilet", "type": "seat", "state": "idle"},
               {"name": "Sink", "type": "faucet", "state": "idle"},
               {"name": "Shower", "type": "faucet", "state": "idle"}
-            ]
+            ],
+            "occupants": []
           }
         ]
       },
@@ -91,7 +99,8 @@
               {"name": "Chair", "type": "seat", "state": "idle"},
               {"name": "Computer", "type": "device", "state": "idle"},
               {"name": "Lamp", "type": "device", "state": "idle"}
-            ]
+            ],
+            "occupants": []
           },
           {
             "name": "Marlon's Office",
@@ -100,7 +109,8 @@
               {"name": "Chair", "type": "seat", "state": "idle"},
               {"name": "Computer", "type": "device", "state": "idle"},
               {"name": "Lamp", "type": "device", "state": "idle"}
-            ]
+            ],
+            "occupants": []
           },
           {
             "name": "Conference Room",
@@ -109,7 +119,8 @@
               {"name": "Chair", "type": "seat", "state": "idle"},
               {"name": "TV", "type": "device", "state": "idle"},
               {"name": "Lamp", "type": "device", "state": "idle"}
-            ]
+            ],
+            "occupants": []
           }
       ]
       }
