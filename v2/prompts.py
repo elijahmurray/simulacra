@@ -26,6 +26,19 @@ agent_seed_data_gorgio = {
         "7. have dinner with family at 6:00 pm",
         "8. watch some TV from 7 to 8 pm",
     ],
+    "quick_start_core_characteristics": """Based on the information provided, Giorgio Rossi's core characteristics appear to be:
+        1. Helpful: Giorgio Rossi is always looking for ways to make the process of getting medication easier for his customers.
+
+        2. Family-oriented: Giorgio Rossi loves his wife and son very much.
+
+        3. Friendly: Giorgio Rossi thinks Sam Moore is a kind and nice man.
+
+        4. Sociable: Giorgio Rossi knows his neighbor, Yuriko Yamamoto, well, and likes to discuss local politics with his colleague Tom Moreno.
+
+        5. Responsible: As a pharmacy shopkeeper, Giorgio Rossi has a sense of responsibility towards his customers and their health.
+
+        6. Curious: Giorgio Rossi is eager to plan and start his day, indicating a sense of curiosity and enthusiasm.""",
+    "quick_start_occupation": """As a pharmacy shopkeeper at the Willow Market and Pharmacy, Giorgio Rossi's daily occupation involves managing the pharmacy, assisting customers with their medication needs, ordering and stocking inventory, and ensuring the smooth operation of the business. He may also need to handle administrative tasks such as bookkeeping, scheduling, and managing employees. Additionally, he may interact with other local businesses and community members to promote his pharmacy and build relationships.""",
 }
 
 
@@ -65,9 +78,10 @@ def what_should_i_do_next_prompt(name, current_datetime):
     return prompt
 
 
-def create_plan_prompt(current_datetime, agent_name, detail_level=1):
-    detail_level_description = "broad strokes"
-    if detail_level == 2:
+def create_plan_prompt(current_datetime, agent_name, detail_level="daily"):
+    if detail_level == "daily":
+        detail_level_description = "broad strokes"
+    if detail_level == "hourly":
         detail_level_description = "medium detail, for every hour of the day"
     # if detail_level == 3:
     #     detail_level_description = "fine detail, 15 minutes by 15 minutes"

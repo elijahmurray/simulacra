@@ -6,7 +6,7 @@ from helpers import handle_logging
 
 
 TIME_INCREMENT = 60  # in_minutes
-time_offset = datetime.timedelta(hours=13)
+time_offset = datetime.timedelta(hours=-7)
 START_TIME = datetime.datetime.now() + time_offset
 
 

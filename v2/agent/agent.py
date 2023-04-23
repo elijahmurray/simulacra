@@ -20,6 +20,8 @@ from .agent_utils import previous_day_summary, store_memory
 
 from memory import MemoryObject, MemoryStream
 
+QUICK_START = True
+
 
 class Agent:
     def __init__(self, biography_data):
@@ -34,10 +36,19 @@ class Agent:
         self.occupational_statement = biography_data["occupational_statement"]
         self.biography_data = biography_data
         self.seed_memories(biography_data)
-        self.cached_daily_occupation = None
-        self.cached_core_characteristics = None
-        self.cached_self_assessment = None
         self.cached_agent_summary = None
+        self.daily_plan = None
+        if QUICK_START:
+            self.cached_daily_occupation = biography_data["quick_start_occupation"]
+            self.cached_core_characteristics = biography_data[
+                "quick_start_core_characteristics"
+            ]
+
+            # self.cached_self_assessment = biography_data["quick_start_self_assessment"],
+        else:
+            self.cached_daily_occupation = None
+            self.cached_core_characteristics = None
+            self.cached_self_assessment = None
 
     def advance_step(self, current_datetime):
         self.current_datetime = current_datetime
@@ -47,11 +58,11 @@ class Agent:
         #     self.create_reflection()
 
         # if self.should_i_plan():
-        # self.create_plan()
+        self.create_daily_plan()
         # self.create_plan(detail_level=3)
 
-        # self.determine_next_action()
-        # self.execute_next_action()
+        self.determine_next_action()
+        self.execute_next_action()
 
     def current_action_statement(self):
         handle_logging(calling_method_name(), type="method")
@@ -178,19 +189,34 @@ class Agent:
         )
         return
 
-    def create_plan(self, higher_level_plan="", detail_level=1):
-        handle_logging("create_plan(detail: " + str(detail_level) + ")", type="method")
+    def create_daily_plan(self):
+        if self.daily_plan is not None:
+            return self.daily_plan
+        else:
+            handle_logging("create_plan(daily)", type="method")
 
-        if detail_level == 1:
             context = (
                 datetime_formatter(self.current_datetime)
                 + self.agent_summary()
                 + previous_day_summary(self)
             )
-        if detail_level == 2:
-            context = datetime_formatter(
-                self.current_datetime
-            ) + tuple_or_array_to_string(higher_level_plan)
+
+            response = OpenAIHandler.chatCompletion(
+                self,
+                context=context,
+                prompt=create_plan_prompt(
+                    current_datetime=datetime_formatter(self.current_datetime),
+                    agent_name=self.name,
+                    detail_level="daily",
+                ),
+            )
+
+            self.daily_plan = response
+
+    def hourly_plan(self, higher_level_plan=""):
+        context = datetime_formatter(self.current_datetime) + tuple_or_array_to_string(
+            higher_level_plan
+        )
 
         response = OpenAIHandler.chatCompletion(
             self,
@@ -198,17 +224,11 @@ class Agent:
             prompt=create_plan_prompt(
                 current_datetime=datetime_formatter(self.current_datetime),
                 agent_name=self.name,
-                detail_level=detail_level,
+                detail_level="hourly",
             ),
         )
 
-        handle_logging(response, type="openai_response")
-
-        if detail_level == 2:
-            store_memory(self, response)
-            return response
-        else:
-            self.create_plan(detail_level=2, higher_level_plan=response)
+        return response
 
     def should_i_plan(self):
         handle_logging(calling_method_name(), type="method")
@@ -272,6 +292,7 @@ class Agent:
         context = self.agent_summary()
         # context = self.prioritize_memories()
         response = OpenAIHandler.chatCompletion(
+            self,
             context=context,
             prompt=what_should_i_do_next_prompt(self.name, self.current_datetime),
         )
