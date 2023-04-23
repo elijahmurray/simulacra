@@ -1,5 +1,5 @@
 import datetime
-import deprecated_agent as Agent
+import agent as Agent
 from helpers import datetime_formatter
 
 from helpers import handle_logging
