@@ -16,8 +16,7 @@ class Agent:
             store_memory_in_vectordb(self.name, memory)
 
     def add_memory(self, description: str):
-        #importance_score = call_llm(IMPORTANCE_PROMPT, {'description': description})
-        importance_score = 1
+        importance_score = call_llm(IMPORTANCE_PROMPT, {'description': description})
         memory = Memory(description, importance_score)
         self.memory_stream.append(memory)
         store_memory_in_vectordb(self.name, memory)
