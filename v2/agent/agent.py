@@ -23,11 +23,12 @@ from .agent_utils import (
     store_memory,
 )
 
-import memory as Memory
+from memory import MemoryStream
 
 
 class Agent:
     def __init__(self, biography_data, age=19):
+        self.memory_stream = MemoryStream()
         self.name = biography_data["name"]
         self.memories = []
         self.current_datetime = None
@@ -66,13 +67,13 @@ class Agent:
         return summary
 
     def seed_memories(self, seed_data):
-        self.memories.append(seed_data["biography"])
+        self.memory_stream.create_and_add_memory(description=seed_data["biography"], timestamp=, importance=)
 
     def create_observation(self):
         print_current_method(self, "create_observation")
         context = self.memories
 
-        response = OpenAIHandler(
+        response = OpenAIHandler.chatCompletion(
             context=context, prompt=WHAT_SHOULD_I_OBSERVE_PROMPT
         ).response
 
@@ -98,7 +99,7 @@ class Agent:
             ) + tuple_or_array_to_string(higher_level_plan)
 
         response = (
-            OpenAIHandler(
+            OpenAIHandler.chatCompletion(
                 context=context,
                 prompt=create_plan_prompt(
                     current_datetime=datetime_formatter(self.current_datetime),
@@ -148,7 +149,7 @@ class Agent:
         print_current_method(self, "what_should_i_reflect_on")
         # name = self.name
         # recent_memories = Memory.where(type="reflection").last(100)  # pseudo code
-        # openai_handler_instance = OpenAIHandler(
+        # openai_handler_instance = OpenAIHandler.chatCompletion(
         #     prompt=WHAT_SHOULD_I_REFLECT_ON + recent_memories
         # )
         # reflection_questions = openai_handler_instance.response
@@ -184,7 +185,7 @@ class Agent:
         print_current_method(self, "determine_next_action")
         context = self.agent_summary()
         # context = self.prioritize_memories()
-        response = OpenAIHandler(
+        response = OpenAIHandler.chatCompletion(
             context=context,
             prompt=what_should_i_do_next_prompt(self.name, self.current_datetime),
         ).response

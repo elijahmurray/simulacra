@@ -14,10 +14,18 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 class OpenAIHandler:
-    def __init__(self, prompt, context=None):
-        self.response = self.query(prompt, context)
+    # def __init__(self, prompt, context=None):
+    # self.response = self.query(prompt, context)
 
-    def query(self, prompt, context=None):
+    def create_embedding(input):
+        response = openai.Embedding.create(
+            input=input,
+            model="text-embedding-ada-002",
+        )
+
+        return response
+
+    def chatCompletion(self, prompt, context=None):
         messages = []
 
         if DEBUG_CONTEXT:
