@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Agent Dashboard</h1>
+    <table id="agent-data">
+        <thead>
+            <tr>
+                <th>Attribute</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        function updateAgentData() {
+            $.getJSON("/get_agent_data", function(data) {
+                let tableContent = "";
+                for (const key in data) {
+                    tableContent += `<tr><td>${key}</td><td>${JSON.stringify(data[key])}</td></tr>`;
+                }
+                $("#agent-data tbody").html(tableContent);
+            });
+        }
+
+        
+
+        // Update agent data every second (1000 ms)
+        setInterval(updateAgentData, 1000);
+
+    </script>
+</body>
+</html>

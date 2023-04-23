@@ -44,6 +44,14 @@ Run the main script.
 
 `python main.py`
 
+To run the agent inspector, run the below in a separate terminal instance:
+
+`python server.py`
+
+And then navigate to `localhost:5001` in your browser.
+
+The page automatically refreshes every 1 second.
+
 
 ## Debugging
 To have more robust debugging, you can turn on various levels of logging using the variables found in the `config.py`, which determines system logging in the `handle_logging` method in `helpers.py`.
