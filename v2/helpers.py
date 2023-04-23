@@ -32,6 +32,7 @@ def handle_logging(message, type, force_log=False):
     ENABLE_WORLD_EVENT_LOGGING = True
     ENABLE_METHOD_CALLED_LOGGING = True
     ENABLE_OPENAI_RESPONSE_LOGGING = False
+    ENABLE_AGENT_EVENT_LOGGING = True
 
     if force_log:
         print(f"{Fore.RED}{message}{Style.RESET_ALL}")
@@ -45,19 +46,18 @@ def handle_logging(message, type, force_log=False):
         print(f"{Fore.MAGENTA}{message}{Style.RESET_ALL}")
         return
     if type == "context" and ENABLE_PROMPT_CONTEXT_LOGGING:
-        print(f"{Fore.GREEN}{message}{Style.RESET_ALL}")
+        print(f"{Fore.MAGENTA}{message}{Style.RESET_ALL}")
         return
-    if type == "agent_event" and ENABLE_WORLD_EVENT_LOGGING:
-        print(f"{Fore.BLUE}{message}{Style.RESET_ALL}")
-        return
-    if type == "world_event" and ENABLE_WORLD_EVENT_LOGGING:
-        print(f"{Fore.BLUE}{message}{Style.RESET_ALL}")
-        return
-    if type == "openai_response" and ENABLE_OPENAI_RESPONSE_LOGGING:
+    if type == "agent_event" and ENABLE_AGENT_EVENT_LOGGING:
         print(f"{Fore.WHITE}{message}{Style.RESET_ALL}")
         return
+    if type == "world_event" and ENABLE_WORLD_EVENT_LOGGING:
+        print(f"{Fore.YELLOW}{message}{Style.RESET_ALL}")
+        return
+    if type == "openai_response" and ENABLE_OPENAI_RESPONSE_LOGGING:
+        print(f"{Fore.GREEN}{message}{Style.RESET_ALL}")
+        return
     else:
-        print(f"{message}")
         return
 
 
@@ -69,3 +69,7 @@ def calling_method_name():
     # get the name of the calling function
     name = code.co_name
     return name
+
+
+def string_from_array(array):
+    return "\n".join(array)

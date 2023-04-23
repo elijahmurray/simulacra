@@ -11,9 +11,9 @@ from colorama import Fore, Back, Style
 
 from helpers import (
     datetime_formatter,
-    tuple_or_array_to_string,
     handle_logging,
     calling_method_name,
+    string_from_array,
 )
 
 from .agent_utils import previous_day_summary, store_memory
@@ -59,7 +59,7 @@ class Agent:
 
         # if self.should_i_plan():
         self.create_daily_plan()
-        # self.create_plan(detail_level=3)
+        self.create_next_hour_plan()
 
         self.determine_next_action()
         self.execute_next_action()
@@ -142,10 +142,7 @@ class Agent:
             # self_assessment = self.name + " feels " + self.current_self_assessment()
 
             # Get the 10 most recent memories
-            recent_memories = self.memories[-10:]
-
-            # Convert the recent memories list to a string
-            recent_memories_str = "\n".join(recent_memories)
+            recent_memories = string_from_array(self.memories[-10:])
 
             # TODO: Add current_self_assessment
             agent_summary = (
@@ -153,7 +150,7 @@ class Agent:
                 + personality
                 + characteristics
                 + occupation
-                + recent_memories_str
+                + recent_memories
                 # + self_assessment
             )
 
@@ -172,7 +169,7 @@ class Agent:
 
     def create_observation(self):
         handle_logging(calling_method_name(), type="method")
-        context = self.agent_summary()
+        context = self.agent_summary() + string_from_array(self.memories[-10:])
 
         response = OpenAIHandler.chatCompletion(
             self,
@@ -213,11 +210,12 @@ class Agent:
 
             self.daily_plan = response
 
-    def hourly_plan(self, higher_level_plan=""):
-        context = datetime_formatter(self.current_datetime) + tuple_or_array_to_string(
-            higher_level_plan
+    def create_next_hour_plan(self):
+        context = (
+            self.agent_summary()
+            + self.daily_plan
+            + string_from_array(self.memories[-10:])
         )
-
         response = OpenAIHandler.chatCompletion(
             self,
             context=context,
