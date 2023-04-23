@@ -7,6 +7,7 @@ import chromadb
 from chromadb.config import Settings
 from dotenv import load_dotenv
 import os
+from llm_utils import get_embedding
 
 # SET UP OPENAI AND THE VECTORDB CLIENT AND COLLECTION
 load_dotenv()
@@ -29,11 +30,7 @@ def get_memory_embedding(memory: Memory) -> List:
     '''
     Creates an embedding for a given text string using OpenAI's embedding API endpoint.
     '''
-    response = openai.Embedding.create(
-        input=memory.description,
-        model="text-embedding-ada-002"
-    )
-    return response['data'][0]['embedding']
+    return get_embedding(memory.description)
 
 def store_memory_in_vectordb(agent_name: str, memory: Memory) -> None:
     '''
