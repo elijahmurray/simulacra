@@ -18,7 +18,9 @@ client = chromadb.Client(Settings(
 ))
 
 try:
-  collection = client.get_collection(name='memories')
+  #collection = client.get_collection(name='memories')
+  client.delete_collection(name="memories")
+  collection = client.create_collection(name='memories')
 except ValueError as e:
   collection = client.create_collection(name='memories')
 
