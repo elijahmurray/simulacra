@@ -31,9 +31,12 @@ class Agent:
         self.memory_stream = MemoryStream()
         self.name = biography_data["name"]
         self.memories = []
+        self.innate_tendencies = biography_data["innate_tendencies"]
+        self.learned_tendencies = biography_data["learned_tendencies"]
         self.current_datetime = None
         self.next_action = None
         self.age = age
+        self.occupational_statement = biography_data["occupational_statement"]
         self.seed_memories(biography_data)
 
     def advance_step(self, current_datetime):
@@ -50,21 +53,35 @@ class Agent:
         self.determine_next_action()
         self.execute_next_action()
 
-    def create_current_action_statement(self):
-        print_current_method(self, "create_current_action_statement")
+    def current_action_statement(self):
+        print_current_method(self, "current_action_statement")
         # (natural_language)
 
+    def current_core_characteristics(self):
+        core_characteristics = OpenAIHandler.chatCompletion(self.name + "'s core characteristics.")
+        core_characteristics_summary = OpenAIHandler.chatCompletion("How would one describe " + self.name + "'s core characteristics given the following statements?\n" + core_characteristics)
+
+        return core_characteristics_summary
+
+    def current_occupation(self):
+        # note: may want to summary similar to current_core_characteristics depending on results
+        return OpenAIHandler.chatCompletion(self.name + "'s current daily occupation.")
+
+    def current_self_assessment(self):
+        # note: may want to summary similar to current_core_characteristics depending on results
+        return OpenAIHandler.chatCompletion(self.name + "'s feeling about his recent progress in life")
+
+    
     def agent_summary(self):
-        #  (e.g., name, traits, and summary of their recent experiences)
-        summary = ""
-        basic_info = "\nName: " + self.name + " (age: " + str(self.age) + ")"
-        memories = ""
-        for memory in self.memories:
-            memories += "\n" + memory
+        identity_information = "Name: " + self.name + " (age: " + str(self.age) + ")\n"
+        personality = self.name + "'s innate tendencies and personality are: " + self.innate_tendencies + "\n"
+        characteristics = self.name + "'s can be described as " + self.current_core_characteristics
+        occupation = self.name + "'s current occupation is " + self.current_occupation
+        self_assessment = self.name + " feels " + self.current_self_assessment
 
-        summary += basic_info + memories
+        agent_summary = identity_information + personality + characteristics + occupation + self
 
-        return summary
+        return agent_summary
 
     def seed_memories(self, seed_data):
         self.memory_stream.create_and_add_memory(description=seed_data["biography"], timestamp=, importance=)
