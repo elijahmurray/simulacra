@@ -3,6 +3,7 @@ from chromadb.config import Settings
 from dotenv import load_dotenv
 import os
 from chromadb.utils import embedding_functions
+from vector_utils import similiarty_search
 
 # SET UP OPENAI AND THE VECTORDB CLIENT AND COLLECTION
 load_dotenv()
@@ -26,7 +27,16 @@ except ValueError as e:
 
 records = collection.get(
     where={"agent": "Truman Burbank"},
-    #include=["documents"]
+    include=["documents", "embeddings", "metadatas"]
 )
 
-print(collection.peek()["embeddings"])
+query = "what are the objects in Truman's bedroom Truman can interact with?"
+result = similiarty_search("Truman Burbank", query, 2)
+
+print("Records:")
+for document in records["documents"]:
+  print(document)
+
+print("Results:")
+for document in result["documents"][0]:
+  print(document)

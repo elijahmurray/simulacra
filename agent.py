@@ -12,6 +12,8 @@ class Agent:
         self.location = starting_location
         # Personality and foundational background auto-set to importance score of 10
         self.memory_stream = [Memory(element, 10) for element in self.description.split(';')]
+        for memory in self.memory_stream:
+            store_memory_in_vectordb(self.name, memory)
 
     def add_memory(self, description: str):
         #importance_score = call_llm(IMPORTANCE_PROMPT, {'description': description})

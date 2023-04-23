@@ -1,5 +1,13 @@
-# OPENAI CONFIG
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
+# CONFIG
+
+DEV_MODE=False
+
+# OPENAI CONFIG
+OPEN_AI_API_KEY = os.getenv("OPEN_AI_API_KEY")
 OPENAI_MODEL="gpt-3.5-turbo"
 MAX_TOKENS=200
 
