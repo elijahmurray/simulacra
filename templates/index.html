@@ -37,7 +37,6 @@
         function updateAgentData() {
             $.getJSON("/get_agent_data", function(data) {
                 let tableContent = "";
-                print(data)
                 for (const key in data) {
                     tableContent += `<tr><td>${key}</td><td>${JSON.stringify(data[key])}</td></tr>`;
                 }
@@ -45,8 +44,11 @@
             });
         }
 
+        
+
         // Update agent data every second (1000 ms)
         setInterval(updateAgentData, 1000);
+
     </script>
 </body>
 </html>

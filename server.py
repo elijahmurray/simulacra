@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 from agent.agent import Agent
 import datetime
+import json
 
 from shared_agent import agent
 
@@ -39,7 +40,6 @@ def update_agent():
         data = request.get_json()
         global agent
         agent.memories = data["memories"]
-        # agent.memory_stream = MemoryStream.from_dict(data["memory_stream"])
         agent.name = data["name"]
         agent.innate_tendencies = data["innate_tendencies"]
         agent.learned_tendencies = data["learned_tendencies"]
@@ -60,5 +60,4 @@ def update_agent():
 
 
 if __name__ == "__main__":
-    # app.run(debug=True)
     app.run(host="0.0.0.0", port=5001, debug=True)
