@@ -7,7 +7,7 @@ import os
 load_dotenv()
 openai.api_key = os.getenv("OPEN_AI_API_KEY")
 
-def call_llm(prompt_template, data: dict):
+def call_llm(prompt_template, data: dict, max_tokens=MAX_TOKENS):
     '''
     Calls the LLM with a prompt and returns the response text.
     Requires that the data dictionary provided has keys that match the prompt's template variables, or error will be thrown.
@@ -18,7 +18,7 @@ def call_llm(prompt_template, data: dict):
         raise Exception("The data dictionary provided is missing keys required by the prompt template. Please check the prompt template and the data dictionary provided.")
     response = openai.ChatCompletion.create(
         model=OPENAI_MODEL,
-        max_tokens=MAX_TOKENS,
+        max_tokens=max_tokens,
         messages=[
                 {"role": "user", "content": prompt}
             ]

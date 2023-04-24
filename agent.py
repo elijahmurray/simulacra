@@ -2,46 +2,96 @@ from memory import Memory
 from environment_objects import Building, Room, RoomObject
 from environment_objects import process_room
 from vector_utils import store_memory_in_vectordb
-from config import IMPORTANCE_PROMPT, INITIAL_PLAN_PROMPT
+from config import IMPORTANCE_PROMPT, INITIAL_PLAN_PROMPT, PLAN_PROMPT_DAY, PLAN_PROMPT_BLOCK
 from llm_utils import call_llm
+import json
+from utils import is_in_time_window
+import datetime
 
 class Agent:
-    def __init__(self, name: str, age: int, description: str, starting_location: Room):
+    def __init__(self, name: str, age: int, description: str, starting_location: Room, sim_time: datetime.datetime):
         self.name = name
         self.age = age
         self.description = description
         self.location = starting_location
+        # This gets set in main.py when the sim starts.
+        self.sim_time = sim_time
+        # The plan variables will be set inside the init function, initialize to None for now.
+        self.current_day_plan = None
+        self.current_block_plan = None
+        self.current_activity = None
+        # The following get set on each loop
+        self.current_observations = []
+
         # Personality and foundational background auto-set to importance score of 10
         for item in self.description.split(';'):
             memory = Memory(item, 10, type="background")
             store_memory_in_vectordb(self.name, memory)
+
         # Give the agent a starting daily plan and store it in the vectorDB.
         initial_plan_params = {
             "agent_name": self.name,
             "age": self.age,
             "agent_summary_description": self.description,
         }
-        initial_plan = call_llm(INITIAL_PLAN_PROMPT, initial_plan_params)
-        self.daily_plan = initial_plan
+        initial_plan = call_llm(INITIAL_PLAN_PROMPT, initial_plan_params, max_tokens=500)
+        print(initial_plan)
+        self.current_day_plan = json.loads(initial_plan)
         initial_plan_memory = Memory(initial_plan, 10, type="day_plan")
         store_memory_in_vectordb(self.name, initial_plan_memory)
 
-    def add_memory(self, description: str, type: str = "observation"):
+        # Give the agent a current block plan and store it in the vectorDB.
+        self.current_block_plan = self.plan_block()
+        self.current_activity = self.get_current_activity()
+
+    def create_memory(self, description: str, type: str):
         importance_score = call_llm(IMPORTANCE_PROMPT, {'description': description})
         memory = Memory(description, importance_score, type)
+        return memory
+
+    def add_memory(self, description: str, type: str):
+        memory = self.create_memory(description, type)
         store_memory_in_vectordb(self.name, memory)
 
     def observe(self):
         observations = []
         observations.append(f"{self.name} is in the {self.location.name} in the {self.location.building.name}.")
         observations.extend(process_room(self.location))
+        self.current_observations = []
         for observation in observations:
-            self.add_memory(observation)
+            self.add_memory(observation, "observation")
+            self.current_observations.append(self.create_memory(observation, "observation"))
+
+    def plan_day(self):
+        # Should be triggered at the end of each day for the next day.
+        day_plan_params = {
+            "agent_name": self.name,
+            "age": self.age,
+            "agent_summary_description": self.description,
+            "yesterday_schedule": self.current_day_plan
+        }
+        day_plan = call_llm(PLAN_PROMPT_DAY, day_plan_params, max_tokens=500)
+        # Update the day plan with the new day plan.
+        self.current_day_plan = json.loads(day_plan)
+        day_plan_memory = Memory(day_plan, 10, type="day_plan")
+        store_memory_in_vectordb(self.name, day_plan_memory)
+
+    def plan_block(self):
+        # Get the current activity
+        current_block = self.get_current_block()
+        block_plan_params = {
+            "agent_name": self.name,
+            "age": self.age,
+            "agent_summary_description": self.description,
+            "block_schedule": current_block
+        }
+        block_plan = call_llm(PLAN_PROMPT_BLOCK, block_plan_params, max_tokens=500)
+        print(block_plan)
+        self.current_block_plan = json.loads(block_plan)
+        block_plan_memory = Memory(block_plan, 10, type="block_plan")
+        store_memory_in_vectordb(self.name, block_plan_memory)
 
     def react(self):
-        pass
-
-    def plan(self):
         pass
 
     def retrieve_memory(self, query: str):
@@ -58,4 +108,14 @@ class Agent:
     def interact_with_object(self, object):
         pass
 
+    # HELPER FUNCTIONS
+    def get_current_block(self):
+        for activity in self.current_day_plan["schedule"]:
+            if(is_in_time_window(self.sim_time, activity["start_time"], activity["duration_minutes"])):
+                return activity
+
+    def get_current_activity(self):
+        for activity in self.current_block_plan["schedule"]:
+            if(is_in_time_window(self.sim_time, activity["start_time"], activity["duration_minutes"])):
+                return activity
 

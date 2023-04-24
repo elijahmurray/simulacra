@@ -21,7 +21,7 @@ RETRIEVAL_WEIGHTS = {
 
 # SIMULATION CONFIG
 
-SIM_CLOCK_INCREMENT = 10
+SIM_CLOCK_INCREMENT_MINUTES = 10
 
 # PROMPTS
 
@@ -45,33 +45,66 @@ What 5 high-level insights can you infer from the above statements? (example for
 INITIAL_PLAN_PROMPT = '''
 Name: {agent_name} (age: {age})
 {agent_summary_description}
-Outline {agent_name}'s initial plan for the day, in hourly increments. Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following format:
-8:00am - wake up
-9:00am - eat breakfast
-10:00am - go to work
+Outline {agent_name}'s plan for the full day, with each plan having a minimum duration of 60 minutes. Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule. Only return JSON in your response, no other text or markdown formatting:
+{{
+  "schedule":
+  [
+    {{
+      "start_time": "8:00AM",
+      "duration_minutes": 60,
+      "description": "wake up"
+    }},
+    {{
+      "start_time": "9:00AM",
+      "duration_minutes": 90,
+      "description": "eat breakfast"
+  ]
+}}
 '''
+
 
 PLAN_PROMPT_DAY = '''
 Name: {agent_name} (age: {age})
 {agent_summary_description}
 The following was {agent_name}'s schedule yesterday:
 {yesterday_schedule}
-Outline {agent_name}'s initial plan for today, in hourly increments. Use the following format:
-8:00am - wake up
-9:00am - eat breakfast
-10:00am - go to work
+Outline {agent_name}'s plan for the full day, with each plan having a minimum duration of 60 minutes and a maximum duration of 120 minutes. Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule. Only return JSON in your response, no other text or markdown formatting:
+{{
+  "schedule":
+  [
+    {{
+      "start_time": "8:00AM",
+      "duration_minutes": 60,
+      "description": "wake up"
+    }},
+    {{
+      "start_time": "9:00AM",
+      "duration_minutes": 90,
+      "description": "eat breakfast"
+  ]
+}}
 '''
 
-PLAN_PROMPT_HOUR = '''
+PLAN_PROMPT_BLOCK= '''
 Name: {agent_name} (age: {age})
 {agent_summary_description}
-The following was {agent_name}'s schedule for one hour.
-{hour_schedule}
-Provide a detailed breakdown of tasks in the hour in increments as small as 5 minutes and as large as 15 minutes. Us the following format:
-8:00am - wake up
-8:05am - brush teeth
-8:10am - make bed
-8:15am - eat breakfast
+The following was {agent_name}'s schedule for the next time block.
+{block_schedule}
+Outline {agent_name}'s plan for the duration of the time block, with each plan having a duration of either 5, 10, or 15 minutes. Do not plan anything outside of the time block duration. Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule. Only return JSON in your response, no other text or markdown formatting:
+{{
+  "schedule":
+  [
+    {{
+      "start_time": "8:00AM",
+      "duration_minutes": 5,
+      "description": "wake up"
+    }},
+    {{
+      "start_time": "8:05AM",
+      "duration_minutes": 10,
+      "description": "brush teeth"
+  ]
+}}
 '''
 
 PLAN_REACTION_PROMPT = '''

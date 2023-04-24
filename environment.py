@@ -2,9 +2,10 @@ import json
 from agent import Agent
 from typing import List
 from environment_objects import Building, Room, RoomObject
+import datetime
 
 class Environment:
-    def __init__(self, world_file_path: str = 'init_data/world_config.json', agent_file_path: str = 'init_data/agent_config.json'):
+    def __init__(self, sim_time: datetime.datetime, world_file_path: str = 'init_data/world_config.json', agent_file_path: str = 'init_data/agent_config.json'):
         """
         Creates the environment with the buildings, rooms, objects, and agents.
         """
@@ -34,7 +35,9 @@ class Environment:
                 name = agent_json["name"],
                 age = agent_json["age"],
                 description=agent_json["description"],
-                starting_location=starting_location)
+                starting_location=starting_location,
+                sim_time=sim_time
+            )
             self.agents[agent.name] = agent
             # Add the agent as an occupant of the starting location, and update the locations cache
             starting_location.add_occupant(agent.name)
@@ -68,11 +71,16 @@ class Environment:
         # Add agent state
         for agent_name, agent in self.agents.items():
             state["agents"][agent_name] = {
-                #"memory_stream": agent.memory_stream,
+                "age": agent.age,
+                "description": agent.description,
+                "current_day_plan": agent.current_day_plan,
+                "current_block_plan": agent.current_block_plan,
+                #"current_activity": agent.current_activity,
+                #"current_observations": agent.current_observations,
                 "location": {
                     "building": agent.location.building.name,
                     "room": agent.location.name
-                }
+                },
             }
 
         return state
