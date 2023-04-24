@@ -11,7 +11,7 @@ def is_in_time_window(sim_time: datetime.datetime, plan_start_time_str: str, dur
     plan_start_time = get_datetime_from_string(plan_start_time_str)
     plan_start_datetime = datetime.datetime.combine(sim_time.date(), plan_start_time)
     plan_end_datetime = plan_start_datetime + datetime.timedelta(minutes=duration_minutes)
-    if plan_start_datetime <= sim_time <= plan_end_datetime:
+    if plan_start_datetime <= sim_time < plan_end_datetime:
         return True
     else:
       return False

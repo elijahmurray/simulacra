@@ -9,11 +9,12 @@ class Environment:
         """
         Creates the environment with the buildings, rooms, objects, and agents.
         """
+        print("loading world and agent data")
         with open(world_file_path) as f:
             world_data = json.load(f)["world"]
         with open(agent_file_path) as f:
             agent_data = json.load(f)["agents"]
-
+        print("creating world")
         self.buildings = {}
         for bldg_json in world_data["buildings"]:
             bldg = Building(bldg_json["name"], bldg_json["type"])
@@ -27,6 +28,7 @@ class Environment:
             self.buildings[bldg.name] = bldg
 
         # Initialize agents with starting location
+        print("creating agents")
         self.agents = {}
         for agent_json in agent_data:
             starting_location = self.get_room(agent_json["starting_location"]["room_name"], agent_json["starting_location"]["building_name"])
@@ -91,6 +93,17 @@ class Environment:
         """
         with open(file_path, 'w') as f:
             json.dump(state, f, indent=2)
+
+    def get_all_buildings(self):
+        return self.buildings.keys()
+
+    def get_all_rooms(self):
+        rooms = []
+        buildings = self.get_all_buildings()
+        for building in buildings:
+            for room in self.buildings[building].rooms.keys():
+                rooms.append(f"{room} in {building}")
+        return rooms
 
     # UNSURE IF BELOW FUNCTIONS ARE NEEDED, MARK FOR REVIEW
     def get_building(self, building_name):

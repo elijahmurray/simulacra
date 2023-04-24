@@ -2,7 +2,7 @@ from memory import Memory
 from environment_objects import Building, Room, RoomObject
 from environment_objects import process_room
 from vector_utils import store_memory_in_vectordb
-from config import IMPORTANCE_PROMPT, INITIAL_PLAN_PROMPT, PLAN_PROMPT_DAY, PLAN_PROMPT_BLOCK
+from config import IMPORTANCE_PROMPT, INITIAL_PLAN_PROMPT, PLAN_PROMPT_DAY, PLAN_PROMPT_BLOCK, ACTION_LOCATION_PROMPT
 from llm_utils import call_llm
 import json
 from utils import is_in_time_window
@@ -24,10 +24,11 @@ class Agent:
         self.current_observations = []
 
         # Personality and foundational background auto-set to importance score of 10
+        print(f"creating starting memories for {self.name}")
         for item in self.description.split(';'):
             memory = Memory(item, 10, type="background")
             store_memory_in_vectordb(self.name, memory)
-
+        print(f"creating initial plans for {self.name}")
         # Give the agent a starting daily plan and store it in the vectorDB.
         initial_plan_params = {
             "agent_name": self.name,
@@ -40,6 +41,7 @@ class Agent:
         initial_plan_memory = Memory(initial_plan, 10, type="day_plan")
         store_memory_in_vectordb(self.name, initial_plan_memory)
 
+        print(f"creating initial block plans for {self.name}")
         # Give the agent a current block plan and store it in the vectorDB.
         self.plan_block()
         self.current_activity = self.get_current_activity()
@@ -71,6 +73,7 @@ class Agent:
             "yesterday_schedule": self.current_day_plan
         }
         day_plan = call_llm(PLAN_PROMPT_DAY, day_plan_params, max_tokens=1000)
+        print(day_plan)
         # Update the day plan with the new day plan.
         self.current_day_plan = json.loads(day_plan)
         day_plan_memory = Memory(day_plan, 10, type="day_plan")
@@ -90,6 +93,17 @@ class Agent:
         self.current_block_plan = json.loads(block_plan)
         block_plan_memory = Memory(block_plan, 10, type="block_plan")
         store_memory_in_vectordb(self.name, block_plan_memory)
+
+    def determine_activity_location(self, activity):
+        location_determination_params = {
+            "agent_summary_description": self.description,
+            "agent_name": self.name,
+            "current_location": self.location,
+            "known_locations": "TODO",
+            "next_action": activity
+        }
+        location_determination = call_llm(ACTION_LOCATION_PROMPT, location_determination_params, max_tokens=1000)
+        pass
 
     def react(self):
         pass

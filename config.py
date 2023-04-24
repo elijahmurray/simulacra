@@ -45,7 +45,7 @@ What 5 high-level insights can you infer from the above statements? (example for
 INITIAL_PLAN_PROMPT = '''
 Name: {agent_name} (age: {age})
 {agent_summary_description}
-Outline {agent_name}'s plan for the full day, with each plan having a minimum duration of 60 minutes. Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule. Only return JSON in your response, no other text or markdown formatting:
+Outline {agent_name}'s plan for the full day, with each plan having a duration of exactly 60 minutes, no more and no less. The start times should be at the top of the hour (for example 8:00 or 9:00, not 8:30 or 9:30). Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule. Only return JSON in your response, no other text or markdown formatting:
 {{
   "schedule":
   [
@@ -56,19 +56,19 @@ Outline {agent_name}'s plan for the full day, with each plan having a minimum du
     }},
     {{
       "start_time": "9:00AM",
-      "duration_minutes": 90,
+      "duration_minutes": 60,
       "description": "eat breakfast"
+    }}
   ]
 }}
 '''
-
 
 PLAN_PROMPT_DAY = '''
 Name: {agent_name} (age: {age})
 {agent_summary_description}
 The following was {agent_name}'s schedule yesterday:
 {yesterday_schedule}
-Outline {agent_name}'s plan for the full day, with each plan having a minimum duration of 60 minutes and a maximum duration of 120 minutes. Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule. Only return JSON in your response, no other text or markdown formatting:
+Outline {agent_name}'s plan for the full day, with each plan having a duration of exactly 60 minutes, no more and no less. The start times should be at the top of the hour (for example 8:00 or 9:00, not 8:30 or 9:30). Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule. Only return JSON in your response, no other text or markdown formatting:
 {{
   "schedule":
   [
@@ -79,8 +79,9 @@ Outline {agent_name}'s plan for the full day, with each plan having a minimum du
     }},
     {{
       "start_time": "9:00AM",
-      "duration_minutes": 90,
+      "duration_minutes": 60,
       "description": "eat breakfast"
+    }}
   ]
 }}
 '''
@@ -88,21 +89,22 @@ Outline {agent_name}'s plan for the full day, with each plan having a minimum du
 PLAN_PROMPT_BLOCK= '''
 Name: {agent_name} (age: {age})
 {agent_summary_description}
-The following was {agent_name}'s schedule for the next time block.
+The following was {agent_name}'s schedule for the next one hour.
 {block_schedule}
-Outline {agent_name}'s plan for the duration of the time block, with each plan having a duration of either 5, 10, or 15 minutes. Do not plan anything outside of the time block duration. Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule. Only return JSON in your response, no other text or markdown formatting:
+Detail {agent_name}'s plan for the whole hour, in exactly 6 tasks, each with a duration of 10 minutes. Only provide a schedule for the hour specified, do not plan past the end of the hour. Only plan six tasks and make all of them 10 minutes duration. Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule. Only return JSON in your response, no other text or markdown formatting:
 {{
   "schedule":
   [
     {{
       "start_time": "8:00AM",
-      "duration_minutes": 5,
+      "duration_minutes": 10,
       "description": "wake up"
     }},
     {{
-      "start_time": "8:05AM",
+      "start_time": "8:10AM",
       "duration_minutes": 10,
       "description": "brush teeth"
+    }}
   ]
 }}
 '''
