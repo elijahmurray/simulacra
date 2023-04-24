@@ -23,7 +23,8 @@ def call_llm(prompt_template, data: dict, max_tokens=MAX_TOKENS):
                 {"role": "user", "content": prompt}
             ]
         )
-    return response['choices'][0]['message']['content']
+    result = response['choices'][0]['message']['content']
+    return result
 
 def get_embedding(text):
     response = openai.Embedding.create(

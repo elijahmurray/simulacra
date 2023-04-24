@@ -34,14 +34,14 @@ class Agent:
             "age": self.age,
             "agent_summary_description": self.description,
         }
-        initial_plan = call_llm(INITIAL_PLAN_PROMPT, initial_plan_params, max_tokens=500)
+        initial_plan = call_llm(INITIAL_PLAN_PROMPT, initial_plan_params, max_tokens=1000)
         print(initial_plan)
         self.current_day_plan = json.loads(initial_plan)
         initial_plan_memory = Memory(initial_plan, 10, type="day_plan")
         store_memory_in_vectordb(self.name, initial_plan_memory)
 
         # Give the agent a current block plan and store it in the vectorDB.
-        self.current_block_plan = self.plan_block()
+        self.plan_block()
         self.current_activity = self.get_current_activity()
 
     def create_memory(self, description: str, type: str):
@@ -70,7 +70,7 @@ class Agent:
             "agent_summary_description": self.description,
             "yesterday_schedule": self.current_day_plan
         }
-        day_plan = call_llm(PLAN_PROMPT_DAY, day_plan_params, max_tokens=500)
+        day_plan = call_llm(PLAN_PROMPT_DAY, day_plan_params, max_tokens=1000)
         # Update the day plan with the new day plan.
         self.current_day_plan = json.loads(day_plan)
         day_plan_memory = Memory(day_plan, 10, type="day_plan")
@@ -85,7 +85,7 @@ class Agent:
             "agent_summary_description": self.description,
             "block_schedule": current_block
         }
-        block_plan = call_llm(PLAN_PROMPT_BLOCK, block_plan_params, max_tokens=500)
+        block_plan = call_llm(PLAN_PROMPT_BLOCK, block_plan_params, max_tokens=1000)
         print(block_plan)
         self.current_block_plan = json.loads(block_plan)
         block_plan_memory = Memory(block_plan, 10, type="block_plan")
