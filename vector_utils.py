@@ -7,7 +7,9 @@ import chromadb
 from chromadb.config import Settings
 from chromadb.utils import embedding_functions
 import os
+import json
 from config import OPEN_AI_API_KEY, DEV_MODE
+from utils import get_datetime_from_datetime_string
 
 # SET UP OPENAI AND THE VECTORDB CLIENT AND COLLECTION
 openai.api_key = OPEN_AI_API_KEY
@@ -48,3 +50,22 @@ def similiarty_search(agent_name: str, query: str, n_results: int = 5) -> List:
     where={"agent": agent_name}
   )
   return results
+
+def get_all_memories(agent_name: str) -> List:
+  results = collection.get(
+    where={"agent": agent_name},
+    include=["documents", "embeddings", "metadatas"]
+  )
+  memories = []
+  for i in range(0,(len(results["documents"])-1)):
+    memories.append(
+      {
+        "description": json.loads(results["documents"][i]) if "plan" in results["metadatas"][i]["type"] else results["documents"][i],
+        "type": results["metadatas"][i]["type"],
+        "created_at": get_datetime_from_datetime_string(results["metadatas"][i]["created_at"]),
+        "last_accessed": get_datetime_from_datetime_string(results["metadatas"][i]["last_accessed"]),
+        "importance_score": results["metadatas"][i]["importance_score"],
+        "embedding": results["embeddings"][i]
+      }
+    )
+  return memories

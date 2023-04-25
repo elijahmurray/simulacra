@@ -1,12 +1,14 @@
 from memory import Memory
 from environment_objects import Building, Room, RoomObject
 from environment_objects import process_room
-from vector_utils import store_memory_in_vectordb
-from config import IMPORTANCE_PROMPT, INITIAL_PLAN_PROMPT, PLAN_PROMPT_DAY, PLAN_PROMPT_BLOCK, ACTION_LOCATION_PROMPT
-from llm_utils import call_llm
+from vector_utils import store_memory_in_vectordb, get_all_memories
+from config import IMPORTANCE_PROMPT, INITIAL_PLAN_PROMPT, PLAN_PROMPT_DAY, PLAN_PROMPT_BLOCK, ACTION_LOCATION_PROMPT, RETRIEVAL_WEIGHTS
+from llm_utils import call_llm, get_embedding
 import json
 from utils import is_in_time_window
 import datetime
+from scipy.spatial.distance import cosine
+from typing import List
 
 class Agent:
     def __init__(self, name: str, age: int, description: str, starting_location: Room, sim_time: datetime.datetime):
@@ -35,7 +37,7 @@ class Agent:
             "agent_summary_description": self.description,
         }
         initial_plan = call_llm(INITIAL_PLAN_PROMPT, initial_plan_params, max_tokens=1500)
-        print(initial_plan)
+        #print(initial_plan)
         self.current_day_plan = json.loads(initial_plan)
         self.add_memory(initial_plan, "day_plan", 10)
 
@@ -44,21 +46,7 @@ class Agent:
         self.plan_block()
         self.current_activity = self.get_current_activity()
 
-    def add_memory(self, description: str, type: str, importance_score: int = None):
-        if not importance_score:
-            importance_score = call_llm(IMPORTANCE_PROMPT, {'description': description})
-        memory = Memory(description, importance_score, type, self.sim_time, self.sim_time)
-        store_memory_in_vectordb(self.name, memory)
-        return memory
-
-    def observe(self):
-        observations = []
-        observations.append(f"{self.name} is in the {self.location.name} in the {self.location.building.name}.")
-        observations.extend(process_room(self.location))
-        self.current_observations = []
-        for observation in observations:
-            observation_memory = self.add_memory(observation, "observation")
-            self.current_observations.append(observation_memory)
+    # PLANNING FUNCTIONS
 
     def plan_day(self):
         # Should be triggered at the end of each day for the next day.
@@ -69,7 +57,7 @@ class Agent:
             "yesterday_schedule": self.current_day_plan
         }
         day_plan = call_llm(PLAN_PROMPT_DAY, day_plan_params, max_tokens=1500)
-        print(day_plan)
+        #print(day_plan)
         # Update the day plan with the new day plan.
         self.current_day_plan = json.loads(day_plan)
         self.add_memory(day_plan, "day_plan", 10)
@@ -84,7 +72,7 @@ class Agent:
             "block_schedule": current_block
         }
         block_plan = call_llm(PLAN_PROMPT_BLOCK, block_plan_params, max_tokens=1500)
-        print(block_plan)
+        #print(block_plan)
         self.current_block_plan = json.loads(block_plan)
         self.add_memory(block_plan, "block_plan", 10)
 
@@ -102,8 +90,16 @@ class Agent:
     def react(self):
         pass
 
-    def retrieve_memory(self, query: str):
-        pass
+    # INTERTACTION FUNCTIONS
+
+    def observe(self):
+        observations = []
+        observations.append(f"{self.name} is in the {self.location.name} in the {self.location.building.name}.")
+        observations.extend(process_room(self.location))
+        self.current_observations = []
+        for observation in observations:
+            observation_memory = self.add_memory(observation, "observation")
+            self.current_observations.append(observation_memory)
 
     def move_to_room(self, new_location):
         self.location.remove_occupant(self.name)
@@ -115,6 +111,43 @@ class Agent:
 
     def interact_with_object(self, object):
         pass
+
+    # MEMORY AND RETRIEVAL FUNCTIONS
+
+    def add_memory(self, description: str, type: str, importance_score: int = None):
+        if not importance_score:
+            importance_score = call_llm(IMPORTANCE_PROMPT, {'description': description})
+        memory = Memory(description, type, float(importance_score), self.sim_time, self.sim_time)
+        store_memory_in_vectordb(self.name, memory)
+        return memory
+
+    def retrieve_memory(self, query: str, n: int = 10):
+        # Get all memories for agent
+        memories = get_all_memories(self.name)
+        query_embedding = get_embedding(query)
+
+        def calculate_relevance_score(memory_embedding: List, query_embedding: List) -> float:
+            return cosine(memory_embedding, query_embedding)
+
+        def calculate_recency_score(last_accessed: datetime.datetime) -> float:
+            hours_since_accessed = (self.sim_time - last_accessed).total_seconds() / 3600
+            decay_factor = 0.99
+            recency_score = decay_factor ** hours_since_accessed
+            return recency_score
+
+        def score_memory(memory_dict: dict) -> float:
+            relevance_score = calculate_relevance_score(memory_dict["embedding"], query_embedding)
+            recency_score = calculate_recency_score(memory_dict["last_accessed"])
+            importance_score = memory_dict["importance_score"]
+            final_score = (relevance_score * RETRIEVAL_WEIGHTS["relevance"]) + (importance_score* RETRIEVAL_WEIGHTS["importance"]) + (recency_score * RETRIEVAL_WEIGHTS["recency"])
+            return final_score
+
+        for memory in memories:
+            memory["score"] = score_memory(memory)
+
+        sorted_memories = sorted(memories, key=lambda k: k["score"], reverse=False)
+
+        return sorted_memories[:n]
 
     # HELPER FUNCTIONS
     def get_current_block(self):

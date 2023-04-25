@@ -4,7 +4,7 @@ load_dotenv()
 
 # CONFIG
 
-DEV_MODE=True
+DEV_MODE=False
 
 # OPENAI CONFIG
 OPEN_AI_API_KEY = os.getenv("OPEN_AI_API_KEY")
@@ -14,9 +14,9 @@ MAX_TOKENS=300
 # MEMORY CONFIG
 
 RETRIEVAL_WEIGHTS = {
-  'importance': 0.5,
-  'relevance': 0.5,
-  'recency': 0.5,
+  'importance': 0.0,
+  'relevance': 1.0,
+  'recency': 0.0,
 }
 
 # SIMULATION CONFIG
