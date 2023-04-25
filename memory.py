@@ -1,17 +1,17 @@
 from dataclasses import dataclass
-from datetime import datetime
+import datetime
 from typing import List
 
 @dataclass
 class Memory:
   description: str
+  type: str
   importance_score: int
-  type: str = "observation"
-  created_at: datetime = datetime.utcnow()
-  last_accessed: datetime = datetime.utcnow()
+  created_at: datetime.datetime
+  last_accessed: datetime.datetime
 
-  def update_last_accessed(self):
-    self.last_accessed = datetime.utcnow()
+  def update_last_accessed(self, access_time: datetime.datetime):
+    self.last_accessed = access_time
 
   def update_importance_score(self, score):
     self.importance_score = score
