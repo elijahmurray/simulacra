@@ -45,10 +45,20 @@ What 5 high-level insights can you infer from the above statements? (example for
 INITIAL_PLAN_PROMPT = '''
 Name: {agent_name} (age: {age})
 {agent_summary_description}
-Outline {agent_name}'s plan for the full day, with each plan having a duration of exactly 60 minutes, no more and no less. The start times should be at the top of the hour (for example 8:00 or 9:00, not 8:30 or 9:30). Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule. Only return JSON in your response, no other text or markdown formatting:
+Outline {agent_name}'s plan for the full day, starting at 12:00AM, with each plan having a duration of exactly 60 minutes, no more and no less. The start times should be at the top of the hour (for example 8:00 or 9:00, not 8:30 or 9:30). All 24 hours of the day should be covered, do not skip any hours. If the agent is sleeping for multiple hours, repeat the sleep task for all the hours the agent is sleeping. Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule, but replace the content of the JSON as you see fit, do not be restricted by the example schedule. Only return JSON in your response, no other text or markdown formatting:
 {{
   "schedule":
   [
+    {{
+      "start_time": "6:00AM",
+      "duration_minutes": 60,
+      "description": "sleep"
+    }},
+    {{
+      "start_time": "7:00AM",
+      "duration_minutes": 60,
+      "description": "sleep"
+    }},
     {{
       "start_time": "8:00AM",
       "duration_minutes": 60,
@@ -68,10 +78,20 @@ Name: {agent_name} (age: {age})
 {agent_summary_description}
 The following was {agent_name}'s schedule yesterday:
 {yesterday_schedule}
-Outline {agent_name}'s plan for the full day, with each plan having a duration of exactly 60 minutes, no more and no less. The start times should be at the top of the hour (for example 8:00 or 9:00, not 8:30 or 9:30). Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule. Only return JSON in your response, no other text or markdown formatting:
+Outline {agent_name}'s plan for the full day, starting at 12:00AM, with each plan having a duration of exactly 60 minutes, no more and no less. The start times should be at the top of the hour (for example 8:00 or 9:00, not 8:30 or 9:30). All 24 hours of the day should be covered, do not skip any hours. If the agent is sleeping for multiple hours, repeat the sleep task for all the hours the agent is sleeping. Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule, but replace the content of the JSON as you see fit, do not be restricted by the example schedule. Only return JSON in your response, no other text or markdown formatting:
 {{
   "schedule":
   [
+    {{
+      "start_time": "6:00AM",
+      "duration_minutes": 60,
+      "description": "sleep"
+    }},
+    {{
+      "start_time": "7:00AM",
+      "duration_minutes": 60,
+      "description": "sleep"
+    }},
     {{
       "start_time": "8:00AM",
       "duration_minutes": 60,
@@ -91,7 +111,7 @@ Name: {agent_name} (age: {age})
 {agent_summary_description}
 The following was {agent_name}'s schedule for the next one hour.
 {block_schedule}
-Detail {agent_name}'s plan for the whole hour, in exactly 6 tasks, each with a duration of 10 minutes. Only provide a schedule for the hour specified, do not plan past the end of the hour. Only plan six tasks and make all of them 10 minutes duration. Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule. Only return JSON in your response, no other text or markdown formatting:
+Detail {agent_name}'s plan for the whole hour, in exactly 6 tasks, each with a duration of 10 minutes. Only provide a schedule for the hour specified, do not plan past the end of the hour. Only plan six tasks and make all of them 10 minutes duration. Do not include any information other than the plan in your response. Produce a plan faithfully, do not ask for more detail, do not ask for more information. Use the following JSON format to produce the schedule, but replace the content of the JSON as you see fit, do not be restricted by the example schedule. Only return JSON in your response, no other text or markdown formatting:
 {{
   "schedule":
   [

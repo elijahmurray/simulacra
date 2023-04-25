@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 def main():
 
-  sim_time = datetime(2023, 2, 1, 12, 0)
+  sim_time = datetime(2023, 2, 1, 0, 0)
 
   print(f"Starting simulation at {sim_time}")
   # INSTANTIATE ENVIRONMENT AND AGENTS STATE

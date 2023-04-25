@@ -35,7 +35,7 @@ class Agent:
             "age": self.age,
             "agent_summary_description": self.description,
         }
-        initial_plan = call_llm(INITIAL_PLAN_PROMPT, initial_plan_params, max_tokens=1000)
+        initial_plan = call_llm(INITIAL_PLAN_PROMPT, initial_plan_params, max_tokens=1500)
         print(initial_plan)
         self.current_day_plan = json.loads(initial_plan)
         initial_plan_memory = Memory(initial_plan, 10, type="day_plan")
@@ -72,7 +72,7 @@ class Agent:
             "agent_summary_description": self.description,
             "yesterday_schedule": self.current_day_plan
         }
-        day_plan = call_llm(PLAN_PROMPT_DAY, day_plan_params, max_tokens=1000)
+        day_plan = call_llm(PLAN_PROMPT_DAY, day_plan_params, max_tokens=1500)
         print(day_plan)
         # Update the day plan with the new day plan.
         self.current_day_plan = json.loads(day_plan)
@@ -88,7 +88,7 @@ class Agent:
             "agent_summary_description": self.description,
             "block_schedule": current_block
         }
-        block_plan = call_llm(PLAN_PROMPT_BLOCK, block_plan_params, max_tokens=1000)
+        block_plan = call_llm(PLAN_PROMPT_BLOCK, block_plan_params, max_tokens=1500)
         print(block_plan)
         self.current_block_plan = json.loads(block_plan)
         block_plan_memory = Memory(block_plan, 10, type="block_plan")

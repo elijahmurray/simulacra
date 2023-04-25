@@ -77,8 +77,8 @@ class Environment:
                 "description": agent.description,
                 "current_day_plan": agent.current_day_plan,
                 "current_block_plan": agent.current_block_plan,
-                #"current_activity": agent.current_activity,
-                #"current_observations": agent.current_observations,
+                "current_activity": agent.current_activity,
+                "current_observations": [observation.description for observation in agent.current_observations],
                 "location": {
                     "building": agent.location.building.name,
                     "room": agent.location.name
