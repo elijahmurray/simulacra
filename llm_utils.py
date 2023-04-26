@@ -25,7 +25,6 @@ def call_llm(prompt_template, data: dict, max_tokens=MAX_TOKENS, temperature=0.2
             ]
         )
     result = response['choices'][0]['message']['content']
-    print(result)
     return result
 
 def get_embedding(text):

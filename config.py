@@ -4,7 +4,7 @@ load_dotenv()
 
 # CONFIG
 
-DEV_MODE=True
+DEV_MODE=False
 
 # OPENAI CONFIG
 OPEN_AI_API_KEY = os.getenv("OPEN_AI_API_KEY")
@@ -14,9 +14,9 @@ MAX_TOKENS=300
 # MEMORY CONFIG
 
 RETRIEVAL_WEIGHTS = {
-  'importance': 0.0,
-  'relevance': 1.0,
-  'recency': 0.0,
+  'importance': 1.0,
+  'relevance': 0.5,
+  'recency': 0.5,
 }
 
 # SIMULATION CONFIG
@@ -132,11 +132,11 @@ Detail {agent_name}'s plan for the whole hour, in exactly 6 tasks, each with a d
 PLAN_REACTION_PROMPT = '''
 {agent_summary_description}
 It is {datetime}.
-{agent_name}'s status: {agent_name} is currently {current_action}.
+{agent_name}'s current activity: {current_activity}.
 Observation: {observation}
 Summary of relevant context from {agent_name}'s memory:
 {relevant_context}
-Should {agent_name} react to the observation, and if so, what would be an appropriate reaction?
+Should {agent_name} react to the observation? If No, just respond "No" with no other words. If Yes, definitively state what the appropriate reaction would be.
 '''
 
 DIALOGUE_INITIAL_PROMPT = '''

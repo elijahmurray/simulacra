@@ -2,7 +2,7 @@ from memory import Memory
 from environment_objects import Building, Room, RoomObject
 from environment_objects import process_room
 from vector_utils import store_memory_in_vectordb, get_all_memories
-from config import IMPORTANCE_PROMPT, INITIAL_PLAN_PROMPT, PLAN_PROMPT_DAY, PLAN_PROMPT_BLOCK, ACTION_LOCATION_PROMPT, RETRIEVAL_WEIGHTS
+from config import IMPORTANCE_PROMPT, INITIAL_PLAN_PROMPT, PLAN_PROMPT_DAY, PLAN_PROMPT_BLOCK, ACTION_LOCATION_PROMPT, RETRIEVAL_WEIGHTS, PLAN_REACTION_PROMPT
 from llm_utils import call_llm, get_embedding
 import json
 from utils import is_in_time_window, extract_json
@@ -38,7 +38,7 @@ class Agent:
             "agent_summary_description": self.description,
         }
         initial_plan = call_llm(INITIAL_PLAN_PROMPT, initial_plan_params, max_tokens=1500)
-        print(initial_plan)
+        #print(initial_plan)
         self.current_day_plan = extract_json(initial_plan)
         self.add_memory(initial_plan, "day_plan", 10)
 
@@ -46,6 +46,19 @@ class Agent:
         # Give the agent a current block plan and store it in the vectorDB.
         self.plan_block()
         self.current_activity = self.get_current_activity()
+
+    # LOOP FUNCTIONS
+    def process_game_step(self):
+        if self.sim_time.hour == 0:
+            self.plan_day()
+        elif self.sim_time.minute == 0:
+            self.plan_block()
+        # Observe surroundings and add to memory stream
+        self.observe()
+        # Determine where the next activity should be
+        self.current_activity = self.get_current_activity()
+        new_location = self.determine_activity_location(self.current_activity)
+        self.move_to_room(new_location)
 
     # PLANNING FUNCTIONS
 
@@ -58,7 +71,7 @@ class Agent:
             "yesterday_schedule": self.current_day_plan
         }
         day_plan = call_llm(PLAN_PROMPT_DAY, day_plan_params, max_tokens=1500)
-        print(day_plan)
+        #print(day_plan)
         # Update the day plan with the new day plan.
         self.current_day_plan = extract_json(day_plan)
         self.add_memory(day_plan, "day_plan", 10)
@@ -73,7 +86,7 @@ class Agent:
             "block_schedule": current_block
         }
         block_plan = call_llm(PLAN_PROMPT_BLOCK, block_plan_params, max_tokens=1500)
-        print(block_plan)
+        #print(block_plan)
         self.current_block_plan = extract_json(block_plan)
         self.add_memory(block_plan, "block_plan", 10)
 
@@ -88,13 +101,25 @@ class Agent:
         }
         location_determination = call_llm(ACTION_LOCATION_PROMPT, location_determination_params, max_tokens=200)
         location_determination = extract_json(location_determination)
-        print(location_determination)
         new_location = self.room_string_to_room_object(location_determination["location"])
-        print(new_location)
+        #print(new_location)
         return new_location
 
     def react(self):
-        pass
+        # Get most important observation in the list of current observations
+        most_important_observation = str(self.current_observations[0])
+        # Get relevant context
+        relevant_context = self.get_relevant_context(most_important_observation)
+        plan_reaction_params = {
+            "agent_summary_description": self.description,
+            "datetime": str(self.sim_time),
+            "agent_name": self.name,
+            "current_activity": self.current_activity["description"],
+            "observaton": most_important_observation,
+            "relevant_context": relevant_context
+        }
+        plan_reaction = call_llm(PLAN_REACTION_PROMPT, plan_reaction_params, max_tokens=200)
+        return plan_reaction
 
     # INTERTACTION FUNCTIONS
 
@@ -106,13 +131,16 @@ class Agent:
         for observation in observations:
             observation_memory = self.add_memory(observation, "observation")
             self.current_observations.append(observation_memory)
+        # Store the list of observations sorted by importance score for quick retrieval
+        self.current_observations = sorted(self.current_observations, key=lambda x: x.importance_score, reverse=True)
 
     def move_to_room(self, new_location):
         self.location.remove_occupant(self.name)
         self.location = new_location
-        new_location.add_occupant(self.name)
+        self.location.add_occupant(self.name)
 
-    def converse(self, other_agent, message):
+    def generate_dialogue(self, other_agent):
+
         pass
 
     def interact_with_object(self, object):
@@ -127,7 +155,18 @@ class Agent:
         store_memory_in_vectordb(self.name, memory)
         return memory
 
-    def retrieve_memory(self, query: str, n: int = 10):
+    def get_relevant_context_summary(self, observation: str, n: int = 3):
+        relative_memories = self.retrieve_relevant_memories(self.name, f"Whaat is {self.name}'s relationship with the following observation: {observation}?")
+        return [mem["description"] for mem in relative_memories[:n]]
+
+    def retrieve_recent_memories(self, n: int = 100):
+        memories = get_all_memories(self.name)
+        sorted_memories = sorted(memories, key=lambda k: k["last_accessed"], reverse=True)
+        top_memories = sorted_memories[:n]
+        memory_objects = [Memory(memory["description"], memory["type"], memory["importance_score"], memory["created_at"], memory["last_accessed"]) for memory in top_memories]
+        return memory_objects
+
+    def retrieve_relevant_memories(self, query: str, n: int = 10):
         # Get all memories for agent
         memories = get_all_memories(self.name)
         query_embedding = get_embedding(query)
