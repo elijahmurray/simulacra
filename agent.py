@@ -48,6 +48,7 @@ class Agent:
         self.current_activity = self.get_current_activity()
 
     # LOOP FUNCTIONS
+
     def process_game_step(self):
         if self.sim_time.hour == 0:
             self.plan_day()
