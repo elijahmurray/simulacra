@@ -9,6 +9,9 @@ from llm_utils import get_embedding
 from scipy.spatial.distance import cosine
 from config import RETRIEVAL_WEIGHTS
 import datetime
+from environment_objects import Building, Room
+from memory import Memory
+import json
 '''
 
 # SET UP OPENAI AND THE VECTORDB CLIENT AND COLLECTION
@@ -50,15 +53,14 @@ print("Results:")
 for document in result["documents"][0]:
   print(document)
 
-'''
 sim_time = datetime.datetime.now()
-def retrieve_memory(agent_name, query: str, n: int = 3):
+def retrieve_memory(agent_name, query: str, n: int = 10):
         # Get all memories for agent
         memories = get_all_memories(agent_name)
         query_embedding = get_embedding(query)
 
         def calculate_relevance_score(memory_embedding: List, query_embedding: List) -> float:
-            return cosine(query_embedding, memory_embedding)
+            return cosine(memory_embedding, query_embedding)
 
         def calculate_recency_score(last_accessed: datetime.datetime) -> float:
             hours_since_accessed = (sim_time - last_accessed).total_seconds() / 3600
@@ -66,20 +68,30 @@ def retrieve_memory(agent_name, query: str, n: int = 3):
             recency_score = decay_factor ** hours_since_accessed
             return recency_score
 
-        def score_memory(memory_dict: dict) -> float:
-            relevance_score = calculate_relevance_score(memory_dict["embedding"], query_embedding)
-            recency_score = calculate_recency_score(memory_dict["last_accessed"])
-            importance_score = memory_dict["importance_score"]
-            final_score = (relevance_score * RETRIEVAL_WEIGHTS["relevance"]) + (float(importance_score)* RETRIEVAL_WEIGHTS["importance"]) + (recency_score * RETRIEVAL_WEIGHTS["recency"])
-            return final_score
+        # Add the raw scores to the dict so we can do min-max normalization on all three scores
+        for memory in memories:
+            memory["relevance_score"] = calculate_relevance_score(memory["embedding"], query_embedding)
+            memory["recency_score"] = calculate_recency_score(memory["last_accessed"])
+
+        # Normalize the scores
+        relevance_scores = [memory["relevance_score"] for memory in memories]
+        recency_scores = [memory["recency_score"] for memory in memories]
+        importance_scores = [memory["importance_score"] for memory in memories]
+        min_relevance = min(relevance_scores)
+        max_relevance = max(relevance_scores)
+        min_recency = min(recency_scores)
+        max_recency = max(recency_scores)
+        min_importance = min(importance_scores)
+        max_importance = max(importance_scores)
 
         for memory in memories:
-            memory["score"] = score_memory(memory)
+            # relevance must be inverted
+            memory["relevance_score"] = 1.0 - ((memory["relevance_score"] - min_relevance) / (max_relevance - min_relevance))
+            memory["recency_score"] = (memory["recency_score"] - min_recency) / (max_recency - min_recency)
+            memory["importance_score"] = (memory["importance_score"] - min_importance) / (max_importance - min_importance)
+            memory["retrieval_score"] = (memory["relevance_score"] * RETRIEVAL_WEIGHTS["relevance"]) + (memory["recency_score"] * RETRIEVAL_WEIGHTS["recency"]) + (memory["importance_score"] * RETRIEVAL_WEIGHTS["importance"])
 
-        sorted_memories = sorted(memories, key=lambda k: k["score"], reverse=False)
-
-        for m in sorted_memories:
-            print(f"{m['score']}: {m['description']}")
+        sorted_memories = sorted(memories, key=lambda k: k["retrieval_score"], reverse=True)
 
         return sorted_memories[:n]
 
@@ -87,3 +99,8 @@ top_mem = retrieve_memory("Truman Burbank", "What does Truman like to do for fun
 
 for mem in top_mem:
      print(mem["description"])
+'''
+
+building = Building("Truman's House")
+room = Room("Truman's Bedroom", building)
+print(json.dumps(room))

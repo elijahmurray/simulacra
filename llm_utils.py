@@ -7,7 +7,7 @@ import os
 load_dotenv()
 openai.api_key = os.getenv("OPEN_AI_API_KEY")
 
-def call_llm(prompt_template, data: dict, max_tokens=MAX_TOKENS):
+def call_llm(prompt_template, data: dict, max_tokens=MAX_TOKENS, temperature=0.2):
     '''
     Calls the LLM with a prompt and returns the response text.
     Requires that the data dictionary provided has keys that match the prompt's template variables, or error will be thrown.
@@ -19,11 +19,13 @@ def call_llm(prompt_template, data: dict, max_tokens=MAX_TOKENS):
     response = openai.ChatCompletion.create(
         model=OPENAI_MODEL,
         max_tokens=max_tokens,
+        temperature=temperature,
         messages=[
                 {"role": "user", "content": prompt}
             ]
         )
     result = response['choices'][0]['message']['content']
+    print(result)
     return result
 
 def get_embedding(text):

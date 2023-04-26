@@ -4,11 +4,11 @@ load_dotenv()
 
 # CONFIG
 
-DEV_MODE=False
+DEV_MODE=True
 
 # OPENAI CONFIG
 OPEN_AI_API_KEY = os.getenv("OPEN_AI_API_KEY")
-OPENAI_MODEL="gpt-3.5-turbo"
+OPENAI_MODEL="gpt-3.5-turbo-0301"
 MAX_TOKENS=300
 
 # MEMORY CONFIG
@@ -165,10 +165,13 @@ What should {agent_name}'s response be?
 ACTION_LOCATION_PROMPT = '''
 {agent_summary_description}
 {agent_name} is currently in {current_location} that has {current_location_description}.
-{agent_name} knows about the following locations: {known_locations}
-Prefer to stay in the current area if the activity can be done there.
+{agent_name} knows about the following Known Locations: {known_locations}
 {agent_name} is planning to {next_action}.
-Which area should {agent_name} go to?
+From the list of Known Locations provided, choose the location that makes the most sense for {agent_name}'s next activity. Prefer to stay in the current area if the activity can be done there.
+Do not include any information other than the selected location from the list in your response. Only include the JSON, do not include any other text or formatting other than the JSON before or after the JSON. Here is the JSON template you should follow when providing your response
+{{
+  "location": "Bathroom in Truman's House"
+}}
 '''
 
 STATE_CHANGE_PROMPT = '''

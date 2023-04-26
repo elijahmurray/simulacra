@@ -5,7 +5,7 @@ from vector_utils import store_memory_in_vectordb, get_all_memories
 from config import IMPORTANCE_PROMPT, INITIAL_PLAN_PROMPT, PLAN_PROMPT_DAY, PLAN_PROMPT_BLOCK, ACTION_LOCATION_PROMPT, RETRIEVAL_WEIGHTS
 from llm_utils import call_llm, get_embedding
 import json
-from utils import is_in_time_window
+from utils import is_in_time_window, extract_json
 import datetime
 from scipy.spatial.distance import cosine
 from typing import List
@@ -22,6 +22,7 @@ class Agent:
         self.current_day_plan = None
         self.current_block_plan = None
         self.current_activity = None
+        self.environment = None
         # The following get set on each loop
         self.current_observations = []
 
@@ -37,8 +38,8 @@ class Agent:
             "agent_summary_description": self.description,
         }
         initial_plan = call_llm(INITIAL_PLAN_PROMPT, initial_plan_params, max_tokens=1500)
-        #print(initial_plan)
-        self.current_day_plan = json.loads(initial_plan)
+        print(initial_plan)
+        self.current_day_plan = extract_json(initial_plan)
         self.add_memory(initial_plan, "day_plan", 10)
 
         print(f"creating initial block plans for {self.name}")
@@ -57,9 +58,9 @@ class Agent:
             "yesterday_schedule": self.current_day_plan
         }
         day_plan = call_llm(PLAN_PROMPT_DAY, day_plan_params, max_tokens=1500)
-        #print(day_plan)
+        print(day_plan)
         # Update the day plan with the new day plan.
-        self.current_day_plan = json.loads(day_plan)
+        self.current_day_plan = extract_json(day_plan)
         self.add_memory(day_plan, "day_plan", 10)
 
     def plan_block(self):
@@ -72,20 +73,25 @@ class Agent:
             "block_schedule": current_block
         }
         block_plan = call_llm(PLAN_PROMPT_BLOCK, block_plan_params, max_tokens=1500)
-        #print(block_plan)
-        self.current_block_plan = json.loads(block_plan)
+        print(block_plan)
+        self.current_block_plan = extract_json(block_plan)
         self.add_memory(block_plan, "block_plan", 10)
 
     def determine_activity_location(self, activity):
         location_determination_params = {
             "agent_summary_description": self.description,
             "agent_name": self.name,
-            "current_location": self.location,
-            "known_locations": "TODO",
+            "current_location": str(self.location),
+            "current_location_description": [str(observation) for observation in self.current_observations],
+            "known_locations": self.get_all_rooms(),
             "next_action": activity
         }
-        location_determination = call_llm(ACTION_LOCATION_PROMPT, location_determination_params, max_tokens=1000)
-        pass
+        location_determination = call_llm(ACTION_LOCATION_PROMPT, location_determination_params, max_tokens=200)
+        location_determination = extract_json(location_determination)
+        print(location_determination)
+        new_location = self.room_string_to_room_object(location_determination["location"])
+        print(new_location)
+        return new_location
 
     def react(self):
         pass
@@ -135,17 +141,30 @@ class Agent:
             recency_score = decay_factor ** hours_since_accessed
             return recency_score
 
-        def score_memory(memory_dict: dict) -> float:
-            relevance_score = calculate_relevance_score(memory_dict["embedding"], query_embedding)
-            recency_score = calculate_recency_score(memory_dict["last_accessed"])
-            importance_score = memory_dict["importance_score"]
-            final_score = (relevance_score * RETRIEVAL_WEIGHTS["relevance"]) + (importance_score* RETRIEVAL_WEIGHTS["importance"]) + (recency_score * RETRIEVAL_WEIGHTS["recency"])
-            return final_score
+        # Add the raw scores to the dict so we can do min-max normalization on all three scores
+        for memory in memories:
+            memory["relevance_score"] = calculate_relevance_score(memory["embedding"], query_embedding)
+            memory["recency_score"] = calculate_recency_score(memory["last_accessed"])
+
+        # Normalize the scores
+        relevance_scores = [memory["relevance_score"] for memory in memories]
+        recency_scores = [memory["recency_score"] for memory in memories]
+        importance_scores = [memory["importance_score"] for memory in memories]
+        min_relevance = min(relevance_scores)
+        max_relevance = max(relevance_scores)
+        min_recency = min(recency_scores)
+        max_recency = max(recency_scores)
+        min_importance = min(importance_scores)
+        max_importance = max(importance_scores)
 
         for memory in memories:
-            memory["score"] = score_memory(memory)
+            # relevance must be inverted
+            memory["relevance_score"] = 1.0 - ((memory["relevance_score"] - min_relevance) / (max_relevance - min_relevance))
+            memory["recency_score"] = (memory["recency_score"] - min_recency) / (max_recency - min_recency)
+            memory["importance_score"] = (memory["importance_score"] - min_importance) / (max_importance - min_importance)
+            memory["retrieval_score"] = (memory["relevance_score"] * RETRIEVAL_WEIGHTS["relevance"]) + (memory["recency_score"] * RETRIEVAL_WEIGHTS["recency"]) + (memory["importance_score"] * RETRIEVAL_WEIGHTS["importance"])
 
-        sorted_memories = sorted(memories, key=lambda k: k["score"], reverse=False)
+        sorted_memories = sorted(memories, key=lambda k: k["retrieval_score"], reverse=True)
 
         return sorted_memories[:n]
 
@@ -159,4 +178,21 @@ class Agent:
         for activity in self.current_block_plan["schedule"]:
             if(is_in_time_window(self.sim_time, activity["start_time"], activity["duration_minutes"])):
                 return activity
+
+    def get_all_buildings(self):
+        return self.environment.keys()
+
+    def get_all_rooms(self):
+        rooms = []
+        buildings = self.get_all_buildings()
+        for building in buildings:
+            for room in self.environment[building].rooms.keys():
+                rooms.append(f"{room} in {building}")
+        return rooms
+
+    def room_string_to_room_object(self, room_string: str):
+        elements = room_string.split(" in ")
+        room_name = elements[0]
+        building_name = elements[1]
+        return self.environment[building_name].rooms[room_name]
 

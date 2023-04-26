@@ -94,17 +94,6 @@ class Environment:
         with open(file_path, 'w') as f:
             json.dump(state, f, indent=2)
 
-    def get_all_buildings(self):
-        return self.buildings.keys()
-
-    def get_all_rooms(self):
-        rooms = []
-        buildings = self.get_all_buildings()
-        for building in buildings:
-            for room in self.buildings[building].rooms.keys():
-                rooms.append(f"{room} in {building}")
-        return rooms
-
     # UNSURE IF BELOW FUNCTIONS ARE NEEDED, MARK FOR REVIEW
     def get_building(self, building_name):
         return self.buildings[building_name]

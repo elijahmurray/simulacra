@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 def main():
 
-  sim_time = datetime(2023, 2, 1, 0, 0)
+  sim_time = datetime(2023, 2, 1, 10, 0)
 
   print(f"Starting simulation at {sim_time}")
   # INSTANTIATE ENVIRONMENT AND AGENTS STATE
@@ -22,8 +22,10 @@ def main():
   while count==0:
     for _,agent in agents.items():
       agent.sim_time = sim_time
+      agent.environment = environment.buildings
       print(f"Generating observations for agent: {agent.name} at {agent.sim_time}")
       agent.observe()
+      agent.determine_activity_location(agent.current_activity)
       print(agent.name)
       print(agent.sim_time)
       print(agent.current_observations)

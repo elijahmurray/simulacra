@@ -12,6 +12,9 @@ class Room:
         self.occupants = []
         self.building = building
 
+    def __str__(self):
+        return f"{self.name} in {self.building.name}"
+
     def add_object(self, obj):
         self.objects[obj.name] = obj
 
@@ -29,6 +32,9 @@ class Building:
         self.name = name
         self.type = bldg_type
         self.rooms = {}
+
+    def __str__(self):
+        return f"{self.name}"
 
     def add_room(self, room):
         self.rooms[room.name] = room

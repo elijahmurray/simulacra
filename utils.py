@@ -1,4 +1,5 @@
 import datetime
+import json
 
 def get_datetime_from_time_string(string_time):
     return datetime.datetime.strptime(string_time, '%I:%M%p').time()
@@ -19,3 +20,8 @@ def is_in_time_window(sim_time: datetime.datetime, plan_start_time_str: str, dur
     else:
       return False
 
+def extract_json(text):
+    json_start = text.find('{')
+    json_end = text.rfind('}') + 1
+    json_str = text[json_start:json_end]
+    return json.loads(json_str)
