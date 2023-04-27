@@ -4,6 +4,7 @@ from agent import Agent
 from config import SIM_CLOCK_INCREMENT_MINUTES
 from time import sleep
 import datetime
+from utils import save_pickle_environment
 
 def main():
 
@@ -33,9 +34,10 @@ def main():
       print(f"{agent.name}'s current activity: {agent.current_activity}")
 
     # Save state
-    state = environment.to_dict()
-    state["sim_time"] = sim_time.strftime("%Y-%m-%d %H:%M:%S")
-    environment.save_state(state)
+    #state = environment.to_dict()
+    #state["sim_time"] = sim_time.strftime("%Y-%m-%d %H:%M:%S")
+    #environment.save_state(state)
+    save_pickle_environment(environment)
 
     # Increment simulation clock
     sim_time += datetime.timedelta(minutes=SIM_CLOCK_INCREMENT_MINUTES)

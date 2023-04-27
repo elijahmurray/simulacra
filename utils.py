@@ -1,5 +1,6 @@
 import datetime
 import json
+import pickle
 
 def get_datetime_from_time_string(string_time):
     return datetime.datetime.strptime(string_time, '%I:%M%p').time()
@@ -25,3 +26,17 @@ def extract_json(text):
     json_end = text.rfind('}') + 1
     json_str = text[json_start:json_end]
     return json.loads(json_str)
+
+def save_pickle_environment(environment, pickle_path: str = 'server_data/environment.pickle'):
+    """
+    Pickles the environment for later use.
+    """
+    with open(pickle_path, 'wb') as f:
+        pickle.dump(environment, f)
+
+def load_pickle_environment(pickle_path: str = 'server_data/environment.pickle'):
+    """
+    Loads the pickled environment.
+    """
+    with open(pickle_path, 'rb') as f:
+        return pickle.load(f)

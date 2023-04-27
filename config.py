@@ -4,7 +4,7 @@ load_dotenv()
 
 # CONFIG
 
-DEV_MODE=True
+DEV_MODE=False
 
 # OPENAI CONFIG
 OPEN_AI_API_KEY = os.getenv("OPEN_AI_API_KEY")

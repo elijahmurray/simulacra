@@ -10,6 +10,7 @@ import os
 import json
 from config import OPEN_AI_API_KEY, DEV_MODE
 from utils import get_datetime_from_datetime_string
+import datetime
 
 # SET UP OPENAI AND THE VECTORDB CLIENT AND COLLECTION
 openai.api_key = OPEN_AI_API_KEY
@@ -70,3 +71,10 @@ def get_all_memories(agent_name: str) -> List:
       }
     )
   return memories
+
+def update_last_accessed(agent_name: str, sim_time: datetime.datetime, memories: List[dict]) -> None:
+  metadatas = [{'last_accessed': str(sim_time)}] * len(memories)
+  collection.update(
+    ids=[memory['id'] for memory in memories],
+    metadatas=metadatas
+  )

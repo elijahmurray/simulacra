@@ -1,7 +1,7 @@
 from memory import Memory
 from environment_objects import Building, Room, RoomObject
 from environment_objects import process_room
-from vector_utils import store_memory_in_vectordb, get_all_memories
+from vector_utils import store_memory_in_vectordb, get_all_memories, update_last_accessed
 from config import IMPORTANCE_PROMPT, INITIAL_PLAN_PROMPT, PLAN_PROMPT_DAY, PLAN_PROMPT_BLOCK, ACTION_LOCATION_PROMPT, RETRIEVAL_WEIGHTS, PLAN_REACTION_PROMPT, REFLECTION_PROMPT, REFLECTION_QUESTIONS_PROMPT
 from llm_utils import call_llm, get_embedding
 import json
@@ -201,13 +201,20 @@ class Agent:
         for memory in memories:
             # relevance must be inverted
             memory["relevance_score"] = 1.0 - ((memory["relevance_score"] - min_relevance) / (max_relevance - min_relevance))
-            memory["recency_score"] = (memory["recency_score"] - min_recency) / (max_recency - min_recency)
+            try:
+                memory["recency_score"] = (memory["recency_score"] - min_recency) / (max_recency - min_recency)
+            except ZeroDivisionError:
+                memory["recency_score"] = 1.0
             memory["importance_score"] = (memory["importance_score"] - min_importance) / (max_importance - min_importance)
             memory["retrieval_score"] = (memory["relevance_score"] * RETRIEVAL_WEIGHTS["relevance"]) + (memory["recency_score"] * RETRIEVAL_WEIGHTS["recency"]) + (memory["importance_score"] * RETRIEVAL_WEIGHTS["importance"])
 
         sorted_memories = sorted(memories, key=lambda k: k["retrieval_score"], reverse=True)
 
-        return sorted_memories[:n]
+        relevant_memories = sorted_memories[:n]
+
+        update_last_accessed(self.name, self.sim_time, relevant_memories)
+
+        return relevant_memories
 
     def reflect(self):
         reflection_questions_params = {
@@ -230,6 +237,7 @@ class Agent:
         return reflection
 
     # HELPER FUNCTIONS
+
     def get_current_block(self):
         for activity in self.current_day_plan["schedule"]:
             if(is_in_time_window(self.sim_time, activity["start_time"], activity["duration_minutes"])):

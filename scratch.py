@@ -13,5 +13,11 @@ from environment_objects import Building, Room
 from memory import Memory
 import json
 from config import IMPORTANCE_PROMPT, INITIAL_PLAN_PROMPT, PLAN_PROMPT_DAY, PLAN_PROMPT_BLOCK, ACTION_LOCATION_PROMPT, RETRIEVAL_WEIGHTS, PLAN_REACTION_PROMPT
+import pickle
+from utils import load_pickle_environment
 
+environment = load_pickle_environment()
+
+for _,v in environment.agents.items():
+    print(vars(v))
 
