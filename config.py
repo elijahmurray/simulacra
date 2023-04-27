@@ -4,7 +4,7 @@ load_dotenv()
 
 # CONFIG
 
-DEV_MODE=False
+DEV_MODE=True
 
 # OPENAI CONFIG
 OPEN_AI_API_KEY = os.getenv("OPEN_AI_API_KEY")
@@ -136,7 +136,10 @@ It is {datetime}.
 Observation: {observation}
 Summary of relevant context from {agent_name}'s memory:
 {relevant_context}
-Should {agent_name} react to the observation? If No, just respond "No" with no other words. If Yes, definitively state what the appropriate reaction would be.
+Should {agent_name} react to the observation? If No, just respond "No" with no other words. If Yes, describe what the appropriate reaction would be very briefly. Example responses if Yes include:
+"Start a conversation with <person>"
+"Take a shower"
+"Sit down at the table"
 '''
 
 DIALOGUE_INITIAL_PROMPT = '''
@@ -177,4 +180,29 @@ Do not include any information other than the selected location from the list in
 STATE_CHANGE_PROMPT = '''
 {agent_name} is currently performing the following action: {current_action} on the following object: {current_object}.
 What should we update the state of the object to? (e.g., if the object is a door, the state could be open or closed. If the object is a stove and the action is cooking, the state could be on or off.)
+'''
+
+REFLECTION_QUESTIONS_PROMPT = '''
+{recent_memories}
+Given only the information above, what are 3 most salient high-level questions we can answer about the subjects in the statements? Structure your reponse according to the JSON below. Do not include any information other than the 3 questions in your response. Only include the JSON, do not include any other text or formatting other than the JSON before or after the JSON. Here is the JSON template you should follow when providing your response:
+{{
+  "questions": [
+    "What is the name of the person who is the subject of the statement?",
+    "What is the name of the person who is the object of the statement?",
+    "What is the name of the person who is the indirect object of the statement?"
+}}
+'''
+
+REFLECTION_PROMPT = '''
+Statements about {agent_name}:
+{statements}
+What 5 high-level insights can you infer from the above statements? Structure your reponse according to the JSON below. Do not include any information other than the 3 questions in your response. Only include the JSON, do not include any other text or formatting other than the JSON before or after the JSON. Here is the JSON template you should follow when providing your response:
+{{
+  "insights": [
+    {{
+      "insight": "The insight you inferred",
+      "evidence": ["Statement 1", "Statement 2", "Statement 3"]
+    }}
+  ]
+}}
 '''

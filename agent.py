@@ -2,7 +2,7 @@ from memory import Memory
 from environment_objects import Building, Room, RoomObject
 from environment_objects import process_room
 from vector_utils import store_memory_in_vectordb, get_all_memories
-from config import IMPORTANCE_PROMPT, INITIAL_PLAN_PROMPT, PLAN_PROMPT_DAY, PLAN_PROMPT_BLOCK, ACTION_LOCATION_PROMPT, RETRIEVAL_WEIGHTS, PLAN_REACTION_PROMPT
+from config import IMPORTANCE_PROMPT, INITIAL_PLAN_PROMPT, PLAN_PROMPT_DAY, PLAN_PROMPT_BLOCK, ACTION_LOCATION_PROMPT, RETRIEVAL_WEIGHTS, PLAN_REACTION_PROMPT, REFLECTION_PROMPT, REFLECTION_QUESTIONS_PROMPT
 from llm_utils import call_llm, get_embedding
 import json
 from utils import is_in_time_window, extract_json
@@ -56,6 +56,7 @@ class Agent:
             self.plan_block()
         # Observe surroundings and add to memory stream
         self.observe()
+        self.reflect()
         # Determine where the next activity should be
         self.current_activity = self.get_current_activity()
         new_location = self.determine_activity_location(self.current_activity)
@@ -160,12 +161,12 @@ class Agent:
         relative_memories = self.retrieve_relevant_memories(self.name, f"Whaat is {self.name}'s relationship with the following observation: {observation}?")
         return [mem["description"] for mem in relative_memories[:n]]
 
-    def retrieve_recent_memories(self, n: int = 100):
+    def retrieve_recent_memories(self, n: int = 50):
         memories = get_all_memories(self.name)
         sorted_memories = sorted(memories, key=lambda k: k["last_accessed"], reverse=True)
         top_memories = sorted_memories[:n]
-        memory_objects = [Memory(memory["description"], memory["type"], memory["importance_score"], memory["created_at"], memory["last_accessed"]) for memory in top_memories]
-        return memory_objects
+        #memory_objects = [Memory(memory["description"], memory["type"], memory["importance_score"], memory["created_at"], memory["last_accessed"]) for memory in top_memories]
+        return top_memories
 
     def retrieve_relevant_memories(self, query: str, n: int = 10):
         # Get all memories for agent
@@ -207,6 +208,26 @@ class Agent:
         sorted_memories = sorted(memories, key=lambda k: k["retrieval_score"], reverse=True)
 
         return sorted_memories[:n]
+
+    def reflect(self):
+        reflection_questions_params = {
+            "recent_memories": [memory["description"] for memory in self.retrieve_recent_memories()],
+        }
+        reflection_questions = call_llm(REFLECTION_QUESTIONS_PROMPT, reflection_questions_params, max_tokens=500)
+        reflection_questions = extract_json(reflection_questions)["questions"]
+        statements = []
+        for question in reflection_questions:
+            relevant_memories = [memory["description"] for memory in self.retrieve_relevant_memories(question, n=3)]
+            statements.extend(relevant_memories)
+        print(statements)
+        reflection_params = {
+            "agent_name": self.name,
+            "statements": statements
+        }
+        reflection = call_llm(REFLECTION_PROMPT, reflection_params, max_tokens=500)
+        reflection = extract_json(reflection)["insights"]
+        print(reflection)
+        return reflection
 
     # HELPER FUNCTIONS
     def get_current_block(self):

@@ -60,6 +60,7 @@ def get_all_memories(agent_name: str) -> List:
   for i in range(0,(len(results["documents"])-1)):
     memories.append(
       {
+        "id": results["ids"][i],
         "description": json.loads(results["documents"][i]) if "plan" in results["metadatas"][i]["type"] else results["documents"][i],
         "type": results["metadatas"][i]["type"],
         "created_at": get_datetime_from_datetime_string(results["metadatas"][i]["created_at"]),
