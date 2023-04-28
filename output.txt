@@ -1,6 +1,0 @@
-Starting simulation at 2023-02-01 10:00:00
-loading world and agent data
-creating world
-creating agents
-creating starting memories for Truman Burbank
-creating initial plans for Truman Burbank
