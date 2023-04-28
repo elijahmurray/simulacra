@@ -1,6 +1,0 @@
-venv/
-.env
-__pycache__
-.python-version
-vectordb/
-server_data/

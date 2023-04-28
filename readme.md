@@ -1,85 +1,44 @@
-# Agent Simulation
+# Generative Agent Simulation
 
-This project simulates a basic interaction between two agents, Alice and Bob, using the OpenAI API. The agents can have conversations, perform tasks, and form relationships. The simulation uses a scheduler to keep track of time and manage the agents' actions.
+## What is this?
 
-Inspired by the Stanford x Google experiment in generative agent human simulating interactions.
+This codebase is an implementation of [Generative Agents: Interactive Simulacra of Human Behavior](https://arxiv.org/abs/2304.03442).
 
-Very much a WIP currently. See roadmap below.
+## How to run
 
-## Setup
+From the root directory:
 
-1. Install Python 3.7 or higher.
+1. Install dependencies:
 
-2. Clone the repository.
-`git clone https://github.com/yourusername/yourrepository.git`
-
-3. Change the directory.
-`cd yourrepository`
-
-4. Set up a virtual environment.
-`python3 -m venv venv`
-
-5. Activate the virtual environment.
-```
-source venv/bin/activate # For Linux and macOS
-venv\Scripts\activate # For Windows
-```
-
-6. Install the required packages.
 `pip install -r requirements.txt`
 
-7. Setup your openAI key
-`cp .env.template .env`
+2. Create a .env file from the .env.template file and set `OPEN_AI_API_KEY` to your OpenAI API key.
 
-Edit the `.env` file to put in your OpenAI private key
-
-
-## Configuration
-
-1. Create an OpenAI account and obtain your API key.
-
-2. Replace the placeholder API key in `main.py` with your own API key.
-```python
-openai.api_key = "your-api-key"
-```
-
-## Usage
-Run the main script.
+3. Run the simulation
 
 `python main.py`
 
-Follow the on-screen instructions to interact with the agents. You can issue the following commands:
+## Repository Structure
 
-- talk: Make the agents have a conversation.
-- recall: Display an agent's long-term memories.
-- add_task: Add a task for an agent to perform.
-- perform_tasks: (Deprecated) Tasks are now performed automatically during the step command.
-- step: Move the simulation forward by one time unit.
-- quit: Exit the simulation.
-
-## Files
-- main.py: The main script that runs the simulation.
-- agent.py: Contains the Agent class definition, which represents an individual agent.
-- scheduler.py: Contains the Scheduler class definition, which manages the agents' actions over time.
-
-## Roadmap
-
-- [x] Agent
-- [x] Global time
-- [x] Dialogue
-- [x] Task management
-- [x] Task extraction from dialogue
-- [x] more realistic dialogue
-- [x] OpenAI setup + dialogue
-- [x] Simple memory system (long term + short term)
-- [ ] Daily planning
-- [ ] Goal setting, objectives, and long term planning
-- [ ] Robust long term and short term memory truncating
-- [ ] God mode
-- [ ] Environment interaction
-- [ ] More personality, traits, and emotions
-- [ ] Suggestions?
-
-## License
-This project is licensed under the MIT License.
-
+- **Environment**: The area in which agents live, move around, and act. Includes a series of Buildings, which contain Rooms, which in turn contain RoomObjects that agents can interact with, like chairs and tables to sit down at, kitchen appliances, and devices like computers.
+  - **environment_objects.py**: Classes representing environment objects including Buildings, Rooms, and Objects.
+  - **environment.py**: Class for the simulation environment including the world and agents in the world.
+  - **environment_utils.py**: Utils for the Environment class.
+- **Agents**: The players in the game, powered by an LLM, that have beliefs and desires that result in intentions, and observe their surroundings and react to carry out actions consistent with their intentions.
+  - **agent.py**: Class for the agents in the simulation.
+  - **utils.py**: Utils for the agent class.
+- **Memory**: Each agent has a Memory Stream, which holds Memory objects that represent an agent's memories and provides helper functions to access relevant memories, create reflections, and store the three different types of memories: observations, reflections, and dialogue.
+  - **memory.py**: Dataclass representing the Memory object.
+  - **memory_stream.py**: Class to manage an agent's memory stream including memory retrieval, reflection creation, etc. Must have an Agent parent.
+  - **utils.py**:
+- **Utils**: A catch-all component for any helper functions like logging, state management, wrappers for external infrastructure like vector databases and LLM APIs, and other miscellaneous tasks like formatting dates.
+  - **logging.py**: Utils for logging output across the simulation.
+  - **vector_db.py**: Classes to interact with different vector DBs like Pinecone and ChromaDB
+  - **formatting.py**: Utils for dealing with data formatting like conversting dates to strings and back again.
+  - **storage.py**: Utils for serializing and deserializing simulation state.
+  - **llm.py**: Utils for interacting with LLMs like `gpt-3.5-turbo`.
+- **Config**: All configuration objects like variables, prompts, etc.
+  - **settings.py**: Various simulation settings.
+  - **prompts.py**: Prompt templates used in LLM calls.
+- **server.py**: A game server that exposes a REST API to inspect game state.
+- **main.py**: main file.
