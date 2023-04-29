@@ -18,6 +18,10 @@ def date_formatter(datetime):
     return datetime.strftime("%B %d, %Y")
 
 
+def hour_formatter(datetime):
+    return datetime.strftime("%B %d, %Y %I:%M %p")
+
+
 def round_time_to_nearest_5_minutes(datetime):
     minute = 5 * round(datetime.minute / 5)
     if minute >= 60:

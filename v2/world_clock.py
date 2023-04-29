@@ -7,8 +7,26 @@ from helpers import handle_logging
 from config import TIME_INCREMENT
 
 
-time_offset = datetime.timedelta(hours=+14)
+time_offset = datetime.timedelta(hours=-14)
 START_TIME = datetime.datetime.now() + time_offset
+
+
+def always_7am_monday():
+    # Get the current date and time
+    now = datetime.datetime.now()
+
+    # Calculate the number of days until next Monday
+    days_to_monday = (7 - now.weekday()) % 7
+
+    # Set the start time to the next Monday at 7AM
+    start_time = datetime.datetime.combine(
+        now + datetime.timedelta(days=days_to_monday), datetime.time(hour=7)
+    )
+
+    return start_time
+
+
+# START_TIME = always_7am_monday
 
 
 class WorldClock:

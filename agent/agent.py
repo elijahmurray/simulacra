@@ -1,10 +1,6 @@
 import pdb
 import re
-from prompts import (
-    create_plan_prompt,
-    plan_next_action_prompt,
-    prompt_current_activity,
-)
+from prompts import create_plan_prompt, current_action_prompt, should_replan
 from openai_handler import OpenAIHandler
 
 from colorama import Fore, Back, Style
@@ -35,10 +31,12 @@ class Agent:
         self.biography_data = biography_data
         self.seed_memories(biography_data)
         self.cached_agent_summary = None
-        self.daily_plan = None
-        self.next_hour_plan = None
+        self.cached_daily_plan = None
+        self.cached_hourly_plan = None
+        self.cached_increment_plan = None
+        self.current_action = None
         if quick_start_data is not None:
-            self.daily_plan = quick_start_data["quick_start_daily_plan"]
+            # self.cached_daily_plan = quick_start_data["quick_start_daily_plan"]
             self.cached_daily_occupation = quick_start_data["quick_start_occupation"]
             self.cached_core_characteristics = quick_start_data[
                 "quick_start_core_characteristics"
@@ -54,7 +52,7 @@ class Agent:
         self.current_datetime = current_datetime
 
         # Make sure there's a plan for the day and next hour
-        # if self.daily_plan is None:
+        # if self.cached_daily_plan is None:
         #     self.create_daily_plan()
         #     self.update_next_hour_plan()
         #     self.execute_next_action()
@@ -63,12 +61,13 @@ class Agent:
         #     self.create_reflection()
 
         # if self.should_i_plan():
-        self.check_daily_plan()
-        self.update_next_hour_plan()
+        self.daily_plan()
+        self.hourly_plan()
+        self.increment_plan()
 
-        self.determine_next_action()
-        self.execute_next_action()
+        self.determine_current_action()
         self.create_observation()
+        # self.should_replan()
 
     def current_core_characteristics(self):
         handle_logging(calling_method_name(), type="method")
@@ -90,6 +89,21 @@ class Agent:
             self.cached_core_characteristics = core_characteristics_summary
             return core_characteristics_summary
 
+    def should_replan(self):
+        handle_logging(calling_method_name(), type="method")
+
+        response = OpenAIHandler.chatCompletion(
+            self,
+            prompt=should_replan(
+                agent=self,
+                agent_summary=self.cached_agent_summary,
+                relevant_memory_context=self.memories[-1],
+            ),
+        )
+
+        if "yes" in response:
+            self.increment_plan()
+
     def current_occupation(self):
         handle_logging(calling_method_name(), type="method")
         if self.cached_daily_occupation is not None:
@@ -98,7 +112,7 @@ class Agent:
             occupation = OpenAIHandler.chatCompletion(
                 self,
                 context=self.biography_data["biography"],
-                prompt=self.name + "'s current daily occupation.",
+                prompt=f"What is {self.name}'s current daily occupation or job? only put a simple statement, such as {self.name} is a student.",
             )
             self.cached_daily_occupation = occupation
             return occupation
@@ -177,67 +191,69 @@ class Agent:
 
     def create_observation(self):
         handle_logging(calling_method_name(), type="method")
-        context = self.agent_summary() + string_from_array(self.memories[-10:])
-
-        response = OpenAIHandler.chatCompletion(
-            self,
-            context=context,
-            prompt=prompt_current_activity(
-                agent=self,
-                current_datetime=self.current_datetime,
-            ),
+        observation = (
+            f"At {datetime_formatter(self.current_datetime)}, {self.current_action}."
         )
 
         store_memory(
-            self, f"At {datetime_formatter(self.current_datetime)}, {response}."
+            self,
+            observation,
         )
-        handle_logging(
-            datetime_formatter(self.current_datetime) + " - " + response,
-            type="agent_event",
-        )
-        return
+        handle_logging(observation, type="agent_event")
 
-    def check_daily_plan(self):
-        handle_logging(calling_method_name(), type="method")
-        if self.daily_plan is not None:
-            return self.daily_plan
+    def daily_plan(self):
+        if self.cached_daily_plan is not None:
+            return self.cached_daily_plan
         else:
             handle_logging("create_plan(daily)", type="method")
 
-            # context = (
-            #     datetime_formatter(self.current_datetime)
-            #     + self.agent_summary()
-            #     + previous_day_summary(self)
-            # )
+            # Create an agent summary if none exists
+            if self.cached_agent_summary is None:
+                self.cached_agent_summary = self.agent_summary()
 
             response = OpenAIHandler.chatCompletion(
                 self,
-                # context=context,
                 prompt=create_plan_prompt(
                     current_datetime=datetime_formatter(self.current_datetime),
-                    # yesterday_summary=previous_day_summary(self),
                     agent=self,
                     detail_level="daily",
                 ),
             )
 
-            self.daily_plan = response
+            self.cached_daily_plan = response
 
-    def update_next_hour_plan(self):
+    def hourly_plan(self):
+        if self.cached_hourly_plan is not None:
+            return self.cached_hourly_plan
+        else:
+            handle_logging("create_plan(hourly)", type="method")
+
+            response = OpenAIHandler.chatCompletion(
+                self,
+                prompt=create_plan_prompt(
+                    current_datetime=datetime_formatter(self.current_datetime),
+                    agent=self,
+                    detail_level="hourly",
+                ),
+            )
+
+            self.cached_hourly_plan = response
+
+    def increment_plan(self):
         handle_logging(calling_method_name(), type="method")
+        if self.cached_increment_plan is not None:
+            return self.cached_increment_plan
+        else:
+            response = OpenAIHandler.chatCompletion(
+                self,
+                prompt=create_plan_prompt(
+                    current_datetime=datetime_formatter(self.current_datetime),
+                    agent=self,
+                    detail_level="increment",
+                ),
+            )
 
-        response = OpenAIHandler.chatCompletion(
-            self,
-            prompt=create_plan_prompt(
-                current_datetime=self.current_datetime,
-                agent=self,
-                detail_level="hourly",
-            ),
-        )
-
-        self.next_hour_plan = response
-
-        return response
+            self.cached_increment_plan = response
 
     def should_i_plan(self):
         handle_logging(calling_method_name(), type="method")
@@ -296,28 +312,18 @@ class Agent:
 
     # input: retrieved_memories[]
     # output: prioritized_memories[]
-    def determine_next_action(self):
+    def determine_current_action(self):
         handle_logging(calling_method_name(), type="method")
         # context = self.prioritize_memories()
         response = OpenAIHandler.chatCompletion(
             self,
-            prompt=plan_next_action_prompt(
+            prompt=current_action_prompt(
                 self.cached_agent_summary,
                 agent=self,
                 current_datetime=self.current_datetime,
             ),
         )
 
-        self.next_action = response
+        self.current_action = response
 
         return response
-
-    def execute_next_action(self):
-        handle_logging(calling_method_name(), type="method")
-        store_memory(self, self.next_action)
-
-        return
-
-    # action_talk: (natural_language)
-    # action_move: pathing_function
-    # action_act_upon_world:
