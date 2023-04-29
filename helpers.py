@@ -19,7 +19,7 @@ def date_formatter(datetime):
 
 
 def hour_formatter(datetime):
-    return datetime.strftime("%B %d, %Y %I:%M %p")
+    return datetime.strftime("%I:%M %p")
 
 
 def round_time_to_nearest_5_minutes(datetime):

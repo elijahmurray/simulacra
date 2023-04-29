@@ -74,16 +74,21 @@ agent_seed_data_student = {
 
 quick_start_data_student = {
     "quick_start_daily_plan": """
-        7:00am - wake up and complete morning routine
-        8:00am - eat breakfast and review schedule for the day
-        9:00am - attend morning classes
-        12:00pm - have lunch with friends
-        1:00pm - go to the library to study
-        4:00pm - attend coding club meeting
-        5:30pm - play soccer with friends
-        7:00pm - have dinner and socialize with roommates
-        8:00pm - work on personal coding projects or homework
-        11:00pm - wind down and prepare for bed.
+       Sophie Johnson's day should start with her morning routine at 7:00 am, followed by attending her classes at 9:00 am. After classes, she can have lunch with her friends at 12:00 pm, and then go to the library to study at 1:00 pm. Sophie can attend her coding club meeting at 4:00 pm and then play soccer with her friends at 5:30 pm. She can have dinner and socialize with her roommates at 7:00 pm and then work on her personal coding projects or homework at 8:00 pm. Sophie should also ensure that she takes breaks throughout the day to avoid burnout and maintain her productivity.
+    """,
+    "quick_start_hourly_plan": """
+        Response:
+        7:00am - Wake up and get ready
+        8:00am - Eat breakfast and check emails/social media
+        9:00am - Attend classes
+        12:00pm - Have lunch with friends
+        1:00pm - Study at the library
+        4:00pm - Attend coding club meeting
+        5:30pm - Play soccer with friends
+        7:00pm - Have dinner and socialize with roommates
+        8:00pm - Work on personal coding projects or homework
+        10:00pm - Wind down and prepare for bed
+        11:00pm - Go to sleep
     """,
     "quick_start_core_characteristics": """Based on the information provided, Sophie Johnson's core characteristics appear to be:
         1. Curious: Sophie loves learning new technologies and programming languages.

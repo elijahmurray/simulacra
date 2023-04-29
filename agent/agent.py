@@ -34,9 +34,11 @@ class Agent:
         self.cached_daily_plan = None
         self.cached_hourly_plan = None
         self.cached_increment_plan = None
+        self.requires_hourly_replan = False
         self.current_action = None
         if quick_start_data is not None:
-            # self.cached_daily_plan = quick_start_data["quick_start_daily_plan"]
+            self.cached_daily_plan = quick_start_data["quick_start_daily_plan"]
+            self.cached_hourly_plan = quick_start_data["quick_start_hourly_plan"]
             self.cached_daily_occupation = quick_start_data["quick_start_occupation"]
             self.cached_core_characteristics = quick_start_data[
                 "quick_start_core_characteristics"
@@ -67,7 +69,11 @@ class Agent:
 
         self.determine_current_action()
         self.create_observation()
-        # self.should_replan()
+        if self.requires_hourly_replan is False:
+            self.create_observation(
+                f"{self.name} is seeing that {self.name}'s hair is on fire"
+            )
+        self.should_replan()
 
     def current_core_characteristics(self):
         handle_logging(calling_method_name(), type="method")
@@ -101,8 +107,11 @@ class Agent:
             ),
         )
 
-        if "yes" in response:
-            self.increment_plan()
+        if "yes" in response.lower():
+            handle_logging(f"{self.name} is replanning", type="agent_event")
+            self.requires_hourly_replan = True
+        else:
+            self.requires_hourly_replan = False
 
     def current_occupation(self):
         handle_logging(calling_method_name(), type="method")
@@ -189,11 +198,10 @@ class Agent:
         #     description=seed_data["biography"], timestamp=self.current_datetime
         # )
 
-    def create_observation(self):
+    def create_observation(self, observation=None):
         handle_logging(calling_method_name(), type="method")
-        observation = (
-            f"At {datetime_formatter(self.current_datetime)}, {self.current_action}."
-        )
+        if observation is None:
+            observation = f"At {datetime_formatter(self.current_datetime)}, {self.current_action}."
 
         store_memory(
             self,
@@ -223,7 +231,7 @@ class Agent:
             self.cached_daily_plan = response
 
     def hourly_plan(self):
-        if self.cached_hourly_plan is not None:
+        if self.cached_hourly_plan is not None and self.requires_hourly_replan is False:
             return self.cached_hourly_plan
         else:
             handle_logging("create_plan(hourly)", type="method")
@@ -234,6 +242,7 @@ class Agent:
                     current_datetime=datetime_formatter(self.current_datetime),
                     agent=self,
                     detail_level="hourly",
+                    relevant_memory_context=self.memories[-1],
                 ),
             )
 
@@ -241,7 +250,10 @@ class Agent:
 
     def increment_plan(self):
         handle_logging(calling_method_name(), type="method")
-        if self.cached_increment_plan is not None:
+        if (
+            self.cached_increment_plan is not None
+            and self.requires_hourly_replan is False
+        ):
             return self.cached_increment_plan
         else:
             response = OpenAIHandler.chatCompletion(
@@ -250,6 +262,7 @@ class Agent:
                     current_datetime=datetime_formatter(self.current_datetime),
                     agent=self,
                     detail_level="increment",
+                    relevant_memory_context=self.memories[-1],
                 ),
             )
 
@@ -298,12 +311,12 @@ class Agent:
     def retrieve_memories(self):
         handle_logging(calling_method_name(), type="method")
 
-    # inputs:
-    #   agent: #self
-    #   prompt: #PENDING
-    #   recency: #exponential_decay_factor: 0.99
-    #   relevancy: (natural_language) #generate an embedding vector of the text description of each memory. Then, we calculate relevance as the cosine similarity between the memory’s embedding vector and the query memory’s embedding vector.
-    # outputs: array of retrieved memories
+        # inputs:
+        #   agent: #self
+        #   prompt: #PENDING
+        #   recency: #exponential_decay_factor: 0.99
+        #   relevancy: (natural_language) #generate an embedding vector of the text description of each memory. Then, we calculate relevance as the cosine similarity between the memory’s embedding vector and the query memory’s embedding vector.
+        # outputs: array of retrieved memories
 
     def prioritize_memories(
         self,
