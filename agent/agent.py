@@ -21,6 +21,8 @@ from .agent_utils import previous_day_summary, store_memory
 
 from memory import MemoryObject, MemoryStream
 
+# setup pickle
+
 
 class Agent:
     def __init__(self, biography_data, quick_start_data=None):
