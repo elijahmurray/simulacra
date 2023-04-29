@@ -207,7 +207,9 @@ class Agent:
     def create_observation(self, observation=None):
         handle_logging(calling_method_name(), type="method")
         if observation is None:
-            observation = f"At {datetime_formatter(self.current_datetime)}, {self.current_action}."
+            observation = (
+                f"At {datetime_formatter(self.current_datetime)}, {self.current_action}"
+            )
 
         store_memory(
             self,
