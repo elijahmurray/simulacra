@@ -11,7 +11,7 @@ from config import (
 
 
 class Logger:
-    def log(message, type, force_log=False):
+    def log(message: str, type: str, force_log: bool = False) -> None:
         if force_log:
             print(f"{Fore.RED}{message}{Style.RESET_ALL}")
             return
@@ -38,7 +38,7 @@ class Logger:
         else:
             return
 
-    def calling_method_name():
+    def calling_method_name() -> str:
         # get the frame object of the calling function
         frame = inspect.currentframe().f_back
         # get the code object of the calling function
