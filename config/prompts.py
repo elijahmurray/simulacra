@@ -1,18 +1,21 @@
+from __future__ import annotations
+from agent.agent import Agent
 from utils.formatting_utils import hour_formatter
 from config import TIME_INCREMENT
+import datetime
 
 
-def current_action_prompt(agent_summary, agent, current_datetime):
+def current_action_prompt(agent_summary: str, agent: Agent, current_datetime: datetime.datetime) -> str:
     prompt = f"""{agent_summary}.\n
         {agent.name}'s current plan is: \n{agent.cached_increment_plan} \n
         \nGiven it is now {hour_formatter(agent.current_datetime) },
-        provide a definitive statement with no explanation for what {agent.name} 
+        provide a definitive statement with no explanation for what {agent.name}
         is doing, in the format: "At [time] {agent.name} is [action]."""
 
     return prompt
 
 
-def create_plan_prompt(current_datetime, agent, detail_level="daily"):
+def create_plan_prompt(current_datetime: datetime.datetime, agent: Agent, detail_level: str = "daily"):
     if detail_level == "daily":
         return f"""Name: {agent.name} (age: {agent.age})
             {agent.cached_agent_summary}
@@ -23,7 +26,7 @@ def create_plan_prompt(current_datetime, agent, detail_level="daily"):
     if detail_level == "hourly":
         return f"""Name: {agent.name} (age: {agent.age})
             {agent.cached_agent_summary}
-            \n{agent.name}'s plan for the day is to: \n 
+            \n{agent.name}'s plan for the day is to: \n
             {agent.cached_daily_plan}\n
             Please break down {agent.name}'s plan into hourly increments. Make sure to fill every hour slot, even if it's the same activity. Use the following format:
             8:00am - wake up
@@ -51,12 +54,12 @@ def create_plan_prompt(current_datetime, agent, detail_level="daily"):
 
 
 def update_plan_prompt(
-    current_datetime, agent, detail_level="hourly", relevant_memory_context=None
+    current_datetime: datetime.datetime, agent: Agent, detail_level:str = "hourly", relevant_memory_context:str = None
 ):
     if detail_level == "hourly":
         return f"""Name: {agent.name} (age: {agent.age})
             {agent.cached_agent_summary}
-            \n{agent.name}'s original plan for the day was to: \n 
+            \n{agent.name}'s original plan for the day was to: \n
             {agent.cached_hourly_plan}\n
             \nHowever, they recently had this observation:\n
             {relevant_memory_context}\n
@@ -85,7 +88,7 @@ def update_plan_prompt(
             """
 
 
-def should_replan_prompt(agent, agent_summary, relevant_memory_context):
+def should_replan_prompt(agent: Agent, agent_summary:str, relevant_memory_context:str):
     return f"""{agent_summary}.
         {agent.name} had this plan for the next hour: \n{agent.cached_increment_plan} \n
         \nThis is a recent observation for {agent.name}:\n
