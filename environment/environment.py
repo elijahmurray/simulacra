@@ -1,12 +1,13 @@
 from __future__ import annotations
 import json
 import pickle
-from agent import Agent
-from environment_objects import Building, Room, RoomObject
+from agent.agent import Agent
+from environment.environment_objects import Building, Room, RoomObject
+from environment.environment_utils import get_room
 import datetime
 
 class Environment:
-    def __init__(self, sim_time: datetime.datetime, world_file_path: str = 'init_data/world_config.json', agent_file_path: str = 'init_data/agent_config.json') -> None:
+    def __init__(self, sim_time: datetime.datetime, world_file_path: str = 'seed_data/world.json', agent_file_path: str = 'seed_data/agents.json') -> None:
         """
         Initialize the Environment instance with buildings, rooms, objects, and agents based on the provided configuration files.
 
@@ -19,10 +20,14 @@ class Environment:
         with open(agent_file_path) as f:
             agent_data = json.load(f)["agents"]
 
-        self.buildings = {bldg["name"]: Building(bldg["name"], bldg["type"], {
-            room["name"]: Room(room["name"], bldg["name"], {
-                obj["name"]: RoomObject(obj["name"], obj["type"], obj["state"], room["name"], bldg["name"]) for obj in room["objects"]
-            }, room["occupants"]) for room in bldg["rooms"]
-        }) for bldg in world_data["buildings"]}
-
-        self.agents = {agent["name"]: Agent(agent["name"], agent["age"], agent["description"], self.get_room(agent["starting_location"]["room_name"], agent["starting_location"]["building_name"]), sim_time) for agent in agent_data}
+        self.buildings = {}
+        for bldg_json in world_data["buildings"]:
+            bldg = Building(bldg_json["name"], bldg_json["type"])
+            for room_json in bldg_json["rooms"]:
+                room = Room(room_json["name"], bldg)
+                for obj_json in room_json["objects"]:
+                    obj = RoomObject(obj_json["name"], obj_json["type"], obj_json["state"], room)
+                    room.add_object(obj)
+                room.occupants = room_json["occupants"]
+                bldg.add_room(room)
+            self.buildings[bldg.name] = bldg
