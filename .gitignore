@@ -30,3 +30,9 @@ build/
 .vscode/
 
 
+server_data/*
+
+
+# Temporary for dev
+test.py
+.python-version

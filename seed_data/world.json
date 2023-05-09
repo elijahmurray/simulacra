@@ -1,0 +1,203 @@
+{
+  "world": {
+    "name": "Seahaven",
+    "buildings": [
+      {
+        "name": "Truman's House",
+        "type": "house",
+        "rooms": [
+          {
+            "name": "Living Room",
+            "objects": [
+              {"name": "Couch", "type": "seat", "state": "idle"},
+              {"name": "TV", "type": "device", "state": "idle"},
+              {"name": "Coffee Table", "type": "surface", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"},
+              {"name": "Bookshelf", "type": "furniture", "state": "idle"}
+            ],
+            "occupants": []
+          },
+          {
+            "name": "Kitchen",
+            "objects": [
+              {"name": "Table", "type": "surface", "state": "idle"},
+              {"name": "Chair", "type": "seat", "state": "idle"},
+              {"name": "Stove", "type": "appliance", "state": "idle"},
+              {"name": "Fridge", "type": "container", "state": "idle"}
+            ],
+            "occupants": []
+          },
+          {"name": "Bedroom",
+            "objects": [
+              {"name": "Bed", "type": "seat", "state": "idle"},
+              {"name": "Nightstand", "type": "surface", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ],
+            "occupants": []
+          },
+          {
+            "name": "Bathroom",
+            "objects": [
+              {"name": "Toilet", "type": "seat", "state": "idle"},
+              {"name": "Sink", "type": "faucet", "state": "idle"},
+              {"name": "Shower", "type": "faucet", "state": "idle"}
+            ],
+            "occupants": []
+          }
+        ]
+      },
+      {
+        "name": "Marlon's House",
+        "type": "house",
+        "rooms": [
+          {
+            "name": "Living Room",
+            "objects": [
+              {"name": "Couch", "type": "seat", "state": "idle"},
+              {"name": "TV", "type": "device", "state": "idle"},
+              {"name": "Coffee Table", "type": "surface", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"},
+              {"name": "Bookshelf", "type": "furniture", "state": "idle"}
+            ],
+            "occupants": []
+          },
+          {
+            "name": "Kitchen",
+            "objects": [
+              {"name": "Table", "type": "surface", "state": "idle"},
+              {"name": "Chair", "type": "seat", "state": "idle"},
+              {"name": "Stove", "type": "appliance", "state": "idle"},
+              {"name": "Fridge", "type": "container", "state": "idle"}
+            ],
+            "occupants": []
+          },
+          {"name": "Bedroom",
+            "objects": [
+              {"name": "Bed", "type": "seat", "state": "idle"},
+              {"name": "Nightstand", "type": "surface", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ],
+            "occupants": []
+          },
+          {
+            "name": "Bathroom",
+            "objects": [
+              {"name": "Toilet", "type": "seat", "state": "idle"},
+              {"name": "Sink", "type": "faucet", "state": "idle"},
+              {"name": "Shower", "type": "faucet", "state": "idle"}
+            ],
+            "occupants": []
+          }
+        ]
+      },
+      {
+        "name": "Seahaven Life & Accident Insurance",
+        "type": "office",
+        "rooms": [
+          {
+            "name": "Truman's Office",
+            "objects": [
+              {"name": "Desk", "type": "surface", "state": "idle"},
+              {"name": "Chair", "type": "seat", "state": "idle"},
+              {"name": "Computer", "type": "device", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ],
+            "occupants": []
+          },
+          {
+            "name": "Marlon's Office",
+            "objects": [
+              {"name": "Desk", "type": "surface", "state": "idle"},
+              {"name": "Chair", "type": "seat", "state": "idle"},
+              {"name": "Computer", "type": "device", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ],
+            "occupants": []
+          },
+          {
+            "name": "Conference Room",
+            "objects": [
+              {"name": "Table", "type": "surface", "state": "idle"},
+              {"name": "Chair", "type": "seat", "state": "idle"},
+              {"name": "TV", "type": "device", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ],
+            "occupants": []
+          }
+      ]
+      },
+      {
+        "name": "Seahaven Market",
+        "type": "store",
+        "rooms": [
+          {
+            "name": "Shopping Area",
+            "objects": [
+              {"name": "Shelf", "type": "surface", "state": "idle"},
+              {"name": "Cash Register", "type": "device", "state": "idle"},
+              {"name": "Shopping Cart", "type": "container", "state": "idle"}
+            ],
+            "occupants": []
+          }
+        ]
+      },
+      {
+        "name": "Seahaven Restaurant",
+        "type": "restaurant",
+        "rooms": [
+          {
+            "name": "Dining Room",
+            "objects": [
+              {"name": "Table", "type": "surface", "state": "idle"},
+              {"name": "Chair", "type": "seat", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ],
+            "occupants": []
+          },
+          {
+            "name": "Kitchen",
+            "objects": [
+              {"name": "Stove", "type": "appliance", "state": "idle"},
+              {"name": "Fridge", "type": "container", "state": "idle"},
+              {"name": "Sink", "type": "faucet", "state": "idle"}
+            ],
+            "occupants": []
+          }
+        ]
+      },
+      {
+        "name": "Seaheaven Park",
+        "type": "park",
+        "rooms": [
+          {
+            "name": "Park Area",
+            "objects": [
+              {"name": "Bench", "type": "seat", "state": "idle"},
+              {"name": "Trash Can", "type": "container", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ],
+            "occupants": []
+          },
+          {
+            "name": "Boardwalk",
+            "objects": [
+              {"name": "Bench", "type": "seat", "state": "idle"},
+              {"name": "Trash Can", "type": "container", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ],
+            "occupants": []
+          },
+          {
+            "name": "Marina",
+            "objects": [
+              {"name": "Boat", "type": "vehicle", "state": "idle"},
+              {"name": "Dock", "type": "surface", "state": "idle"},
+              {"name": "Lamp", "type": "device", "state": "idle"}
+            ],
+            "occupants": []
+          }
+        ]
+      }
+    ]
+  }
+}
