@@ -1,4 +1,3 @@
-from __future__ import annotations
 import json
 import pickle
 from agent.agent import Agent
@@ -20,6 +19,7 @@ class Environment:
         with open(agent_file_path) as f:
             agent_data = json.load(f)["agents"]
 
+        # Create the buildings, rooms, and objects
         self.buildings = {}
         for bldg_json in world_data["buildings"]:
             bldg = Building(bldg_json["name"], bldg_json["type"])
@@ -31,3 +31,20 @@ class Environment:
                 room.occupants = room_json["occupants"]
                 bldg.add_room(room)
             self.buildings[bldg.name] = bldg
+
+        # Create the agents
+        self.agents = {}
+        for agent_json in agent_data:
+            agent = Agent(bio_data=agent_json, sim_time=sim_time)
+            agent.location = get_room(self.buildings, agent_json["starting_location"]["room_name"], agent_json["starting_location"]["building_name"])
+            agent.location.add_occupant(agent.name)
+            self.agents[agent.name] = agent
+
+    def write_pickle(self, file_path: str = 'cached_data/environment.pkl') -> None:
+        """
+        Pickle the environment instance to the provided file path.
+
+        :param file_path: The path to the pickle file. Defaults to 'seed_data/environment.pkl'.
+        """
+        with open(file_path, 'wb') as f:
+            pickle.dump(self, f)
