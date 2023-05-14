@@ -314,7 +314,7 @@ def dialogue_continuation_prompt(agent_name: str, agent_summary_description: str
     )
     return prompt
 
-def action_location_prompt():
+def action_location_prompt(agent_name: str, agent_summary_description: str, current_location: str, current_location_description: str, known_locations: List, next_action: str):
     template = '''
     {agent_summary_description}
     {agent_name} is currently in {current_location} that has {current_location_description}.
@@ -326,16 +326,29 @@ def action_location_prompt():
     "location": "Bathroom in Truman's House"
     }}
     '''
+    prompt = template.format(
+        agent_name=agent_name,
+        agent_summary_description=agent_summary_description,
+        current_location=current_location,
+        current_location_description=current_location_description,
+        known_locations=known_locations,
+        next_action=next_action
+    )
     return prompt
 
-def state_change_prompt():
+def state_change_prompt(agent_name: str, current_action: str, current_object: str):
     template = '''
     {agent_name} is currently performing the following action: {current_action} on the following object: {current_object}.
     What should we update the state of the object to? (e.g., if the object is a door, the state could be open or closed. If the object is a stove and the action is cooking, the state could be on or off.)
     '''
+    prompt = template.format(
+        agent_name=agent_name,
+        current_action=current_action,
+        current_object=current_object
+    )
     return prompt
 
-def reflection_questions_prompt():
+def reflection_questions_prompt(recent_memories: List):
     template = '''
     {recent_memories}
     Given only the information above, what are 3 most salient high-level questions we can answer about the subjects in the statements? Structure your reponse according to the JSON below. Do not include any information other than the 3 questions in your response. Only include the JSON, do not include any other text or formatting other than the JSON before or after the JSON. Here is the JSON template you should follow when providing your response:
@@ -346,9 +359,12 @@ def reflection_questions_prompt():
         "What is the name of the person who is the indirect object of the statement?"
     }}
     '''
+    prompt = template.format(
+        recent_memories=recent_memories
+    )
     return prompt
 
-def reflection_prompt():
+def reflection_prompt(agent_name: str, statements: List):
     template = '''
     Statements about {agent_name}:
     {statements}
@@ -362,5 +378,9 @@ def reflection_prompt():
     ]
     }}
     '''
+    prompt = template.format(
+        agent_name=agent_name,
+        statements=statements
+    )
     return prompt
 
